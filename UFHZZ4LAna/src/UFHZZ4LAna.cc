@@ -924,9 +924,9 @@ UFHZZ4LAna::UFHZZ4LAna(const edm::ParameterSet& iConfig) :
                 BTagEntry::FLAV_B,    // btag flavour
                 "comb");               // measurement type
 
-    if(year==2018)    {EleBDT_name_161718 = "ElectronMVAEstimatorRun2Autumn18IdIsoValues"; BTagCut=0.4184; heepID_name_161718 = "heepElectronID-HEEPV70";}
-    if(year==2017)    {EleBDT_name_161718 = "ElectronMVAEstimatorRun2Fall17IsoV2Values"; BTagCut=0.4941; heepID_name_161718 = "heepElectronID-HEEPV70";}
-    if(year==20165 || year==20160)    {EleBDT_name_161718 = "ElectronMVAEstimatorRun2Summer16IdIsoValues"; BTagCut=0.6321; heepID_name_161718 = "heepElectronID-HEEPV70";}
+    if(year==2018)    {EleBDT_name_161718 = "ElectronMVAEstimatorRun2Summer18ULIdIsoValues"; BTagCut=0.4184; heepID_name_161718 = "heepElectronID-HEEPV70";}
+    if(year==2017)    {EleBDT_name_161718 = "ElectronMVAEstimatorRun2Summer17ULIdIsoValues"; BTagCut=0.4941; heepID_name_161718 = "heepElectronID-HEEPV70";}
+    if(year==20165 || year==20160)    {EleBDT_name_161718 = "ElectronMVAEstimatorRun2Summer16ULIdIsoValues"; BTagCut=0.6321; heepID_name_161718 = "heepElectronID-HEEPV70";}
 
 
 	std::string DATAPATH = std::getenv( "CMSSW_BASE" );
@@ -1921,6 +1921,7 @@ UFHZZ4LAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                     lep_d0BS.push_back(recoElectrons[lep_ptindex[i]].gsfTrack()->dxy(beamSpot->position()));
                     lep_d0PV.push_back(recoElectrons[lep_ptindex[i]].gsfTrack()->dxy(PV->position()));
 					lep_numberOfValidPixelHits.push_back(recoElectrons[lep_ptindex[i]].gsfTrack()->hitPattern().numberOfValidPixelHits());
+					lep_trackerLayersWithMeasurement.push_back(recoElectrons[lep_ptindex[i]].gsfTrack()->hitPattern().trackerLayersWithMeasurement());
 					lep_isEB.push_back(recoElectrons[lep_ptindex[i]].isEB());
 					lep_isEE.push_back(recoElectrons[lep_ptindex[i]].isEE());
 					lep_p.push_back(recoElectrons[lep_ptindex[i]].p());
@@ -6152,6 +6153,8 @@ void UFHZZ4LAna::setGENVariables(edm::Handle<reco::GenParticleCollection> pruned
 
 }
 
+// ask for a Z1 between 40 - 120 and a Z2 between 12 - 120;
+// cut on lep pt and lep eta
 bool UFHZZ4LAna::mZ1_mZ2(unsigned int& L1, unsigned int& L2, unsigned int& L3, unsigned int& L4, bool makeCuts)
 {
 

@@ -58,5 +58,5 @@ config.Data.allowNonValidInputDataset = True
 
 config.section_('User')
 config.section_('Site')
-config.Site.storageSite = 'T2_US_Florida'
-config.Site.whitelist = ['T2_US_*']
+config.Site.storageSite = 'T2_IT_Bari'
+config.Site.whitelist = ['T2_IT_*']

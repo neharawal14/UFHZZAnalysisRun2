@@ -21,7 +21,7 @@ process.Timing = cms.Service("Timing",
                              )
 
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000) )
 
 process.options = cms.untracked.PSet(
         numberOfThreads = cms.untracked.uint32(2)
@@ -108,7 +108,7 @@ from RecoEgamma.EgammaTools.EgammaPostRecoTools import setupEgammaPostRecoSeq
 setupEgammaPostRecoSeq(process,
                        runEnergyCorrections=False,
                        runVID=True,
-                       eleIDModules=['RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Autumn18_ID_ISO_cff','RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV70_cff'],
+                       eleIDModules=['RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Summer18UL_ID_ISO_cff','RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV70_cff'],
                        phoIDModules=['RecoEgamma.PhotonIdentification.Identification.cutBasedPhotonID_Fall17_94X_V2_cff'],
                        era='2018-Prompt')
 
@@ -157,7 +157,7 @@ era = "Autumn18_V19_MC"
 # for HPC
 dBFile = os.environ.get('CMSSW_BASE')+"/src/UFHZZAnalysisRun2/UFHZZ4LAna/data/"+era+".db"
 # for crab
-dBFile = "src/UFHZZAnalysisRun2/UFHZZ4LAna/data/"+era+".db"
+#dBFile = "src/UFHZZAnalysisRun2/UFHZZ4LAna/data/"+era+".db"
 process.jec = cms.ESSource("PoolDBESSource",
                            CondDBSetup,
                            connect = cms.string("sqlite_file:"+dBFile),
@@ -225,7 +225,7 @@ process.load("JetMETCorrections.Modules.JetResolutionESProducer_cfi")
 # for hpc
 dBJERFile = os.environ.get('CMSSW_BASE')+"/src/UFHZZAnalysisRun2/UFHZZ4LAna/data/Autumn18_V7_MC.db"   
 # for crab
-dBJERFile = "src/UFHZZAnalysisRun2/UFHZZ4LAna/data/Autumn18_V7_MC.db"
+#dBJERFile = "src/UFHZZAnalysisRun2/UFHZZ4LAna/data/Autumn18_V7_MC.db"
 process.jer = cms.ESSource("PoolDBESSource",
         CondDBSetup,
         connect = cms.string("sqlite_file:"+dBJERFile),
@@ -256,7 +256,7 @@ qgDatabaseVersion = 'cmssw8020_v2'
 # for hpc
 QGdBFile = os.environ.get('CMSSW_BASE')+"/src/UFHZZAnalysisRun2/UFHZZ4LAna/data/QGL_"+qgDatabaseVersion+".db"
 # for crab
-QGdBFile = "src/UFHZZAnalysisRun2/UFHZZ4LAna/data/QGL_"+qgDatabaseVersion+".db"
+#QGdBFile = "src/UFHZZAnalysisRun2/UFHZZ4LAna/data/QGL_"+qgDatabaseVersion+".db"
 process.QGPoolDBESSource = cms.ESSource("PoolDBESSource",
       DBParameters = cms.PSet(messageLevel = cms.untracked.int32(1)),
       timetype = cms.string('runnumber'),
