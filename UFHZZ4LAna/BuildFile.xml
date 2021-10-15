@@ -38,9 +38,7 @@
 <use   name="RecoEcal/EgammaCoreTools"/>
 <use   name="PhysicsTools/SelectorUtils"/>
 <use   name="MagneticField/Records"/>
-<use   name="ZZMatrixElement/MELA"/>
-<use   name="ZZMatrixElement/MEKD"/>
-<use   name="ZZMatrixElement/MEMCalculators"/>
+<use   name="JHUGenMELA/MELA"/>
 <use   name="KinZfitter/KinZfitter"/>
 <use   name="CondFormats/JetMETObjects"/>
 <use   name="JetMETCorrections/Objects"/>

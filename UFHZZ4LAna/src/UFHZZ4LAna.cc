@@ -105,7 +105,7 @@
 #include "RecoVertex/VertexTools/interface/VertexDistance3D.h"
 
 // KD's
-#include "ZZMatrixElement/MELA/interface/Mela.h"
+#include "JHUGenMELA/MELA/interface/Mela.h"
 
 //Helper
 #include "UFHZZAnalysisRun2/UFHZZ4LAna/interface/HZZ4LHelper.h"

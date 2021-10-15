@@ -1,3 +1,34 @@
+SCRAM_ARCH=slc7_amd64_gcc700; export SCRAM_ARCH
+cmsrel CMSSW_10_6_20
+cd CMSSW_10_6_20/src/
+cmsenv
+git cms-init
+git clone -b UL_19 https://ferrico@github.com/ferrico/UFHZZAnalysisRun2.git
+git cms-merge-topic asculac:Electron_XGBoost_MVA_16UL_17UL
+git cms-addpkg GeneratorInterface/RivetInterface
+git cms-addpkg SimDataFormats/HTXS
+git cms-addpkg RecoEgamma/EgammaTools
+git clone https://github.com/cms-egamma/EgammaPostRecoTools.git
+mv EgammaPostRecoTools/python/EgammaPostRecoTools.py RecoEgamma/EgammaTools/python/
+git cms-addpkg RecoEgamma/PhotonIdentification
+git cms-addpkg RecoEgamma/ElectronIdentification
+git cms-merge-topic cms-egamma:EgammaPostRecoTools
+git clone -b ULSSfiles_correctScaleSysMC https://github.com/jainshilpi/EgammaAnalysis-ElectronTools.git EgammaAnalysis/ElectronTools/data/
+git cms-addpkg EgammaAnalysis/ElectronTools
+git cms-addpkg RecoJets/JetProducers
+git cms-addpkg PhysicsTools/PatAlgos/
+git clone -b v2.3.5 https://github.com/JHUGen/JHUGenMELA
+sh JHUGenMELA/MELA/setup.sh -j 8
+git clone -b UL_19 https://github.com/ferrico/KinZfitter.git
+scramv1 b -j 8
+
+
+
+
+
+----------------------
+OLD STUFF
+----------------------
 git cms-init
 git cms-merge-topic mkovac:Electron_XGBoost_MVA_2016_and_2018_CMSSW_10_2_15
 git cms-merge-topic cms-egamma:EgammaPostRecoTools 

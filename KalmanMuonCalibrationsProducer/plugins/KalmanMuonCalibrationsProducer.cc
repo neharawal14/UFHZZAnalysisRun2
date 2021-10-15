@@ -18,8 +18,9 @@
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "DataFormats/PatCandidates/interface/Muon.h"
 
+#include "TRandom3.h"
 // Kalman Muon Corrections 
-#include "KaMuCa/Calibration/interface/KalmanMuonCalibrator.h"
+//#include "KaMuCa/Calibration/interface/KalmanMuonCalibrator.h"
 // Rochester Corrections
 #include "UFHZZAnalysisRun2/KalmanMuonCalibrationsProducer/src/RoccoR.cc"
 //
@@ -46,7 +47,7 @@ class KalmanMuonCalibrationsProducer : public edm::EDProducer {
       // ----------member data ---------------------------
 
       // Kalman Muon Calibrator 
-      KalmanMuonCalibrator *kalmanMuonCalibrator;
+//      KalmanMuonCalibrator *kalmanMuonCalibrator;
       RoccoR  *calibrator;
       edm::EDGetToken muonsCollection_;
       bool isMC;
@@ -78,11 +79,11 @@ KalmanMuonCalibrationsProducer::KalmanMuonCalibrationsProducer(const edm::Parame
     rochesterSys(iConfig.getUntrackedParameter<int>("rochesterSys",0)),
     year(iConfig.getUntrackedParameter<int>("year"))
 {
-   if (isMC) {
-       kalmanMuonCalibrator = new KalmanMuonCalibrator("MC_80X_13TeV");
-   } else {
-       kalmanMuonCalibrator = new KalmanMuonCalibrator("DATA_80X_13TeV");
-   }
+//   if (isMC) {
+//       kalmanMuonCalibrator = new KalmanMuonCalibrator("MC_80X_13TeV");
+//   } else {
+//       kalmanMuonCalibrator = new KalmanMuonCalibrator("DATA_80X_13TeV");
+//   }
    
    std::string DATAPATH = std::getenv( "CMSSW_BASE" );
    if(year == 2018)    DATAPATH+="/src/UFHZZAnalysisRun2/KalmanMuonCalibrationsProducer/data/roccor.Run2.v5/RoccoR2018UL.txt";
@@ -166,13 +167,13 @@ KalmanMuonCalibrationsProducer::produce(edm::Event& iEvent, const edm::EventSetu
                if ( gen_particle != 0)
                {                                                        
                    //std::cout<<"test1  charge "<<mu.charge()<<" oldpt "<<oldpt<<" eta "<<mu.eta()<<" phi "<<mu.phi()<<" genpt "<<gen_particle->pt()<<std::endl;
-                   scale_factor = calibrator->kSpreadMC(mu.charge(), oldpt, mu.eta(), mu.phi(), gen_particle->pt());
+                   scale_factor = calibrator->kSpreadMC(mu.charge(), oldpt, mu.eta(), mu.phi(), gen_particle->pt(), 5, 0);
                    smear_error = calibrator->kSpreadMCerror(mu.charge(), oldpt, mu.eta(), mu.phi(), gen_particle->pt());
                }
                else
                {
                    //std::cout<<"test2  charge "<<mu.charge()<<" oldpt "<<oldpt<<" eta "<<mu.eta()<<" phi "<<mu.phi()<<std::endl;
-                   scale_factor = calibrator->kSmearMC(mu.charge(), oldpt, mu.eta(), mu.phi(), nl, u1);
+                   scale_factor = calibrator->kSmearMC(mu.charge(), oldpt, mu.eta(), mu.phi(), nl, u1, 5, 0);
                    smear_error = calibrator->kSmearMCerror(mu.charge(), oldpt, mu.eta(), mu.phi(), nl, u1);
                    
                }
@@ -190,7 +191,7 @@ KalmanMuonCalibrationsProducer::produce(edm::Event& iEvent, const edm::EventSetu
                /// ====== ON DATA (correction only) =====
                if(mu.pt()>2.0 && fabs(mu.eta())<2.4)
                {
-                   scale_factor = calibrator->kScaleDT(mu.charge(), oldpt, mu.eta(), mu.phi());
+                   scale_factor = calibrator->kScaleDT(mu.charge(), oldpt, mu.eta(), mu.phi(), 5, 0);
                    scale_error = calibrator->kScaleDTerror(mu.charge(), oldpt, mu.eta(), mu.phi());
                    smear_error = calibrator->kSmearMCerror(mu.charge(), oldpt, mu.eta(), mu.phi(), nl, u1);
                }
