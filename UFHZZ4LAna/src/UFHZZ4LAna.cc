@@ -733,7 +733,7 @@ private:
 
 UFHZZ4LAna::UFHZZ4LAna(const edm::ParameterSet& iConfig) :
     histContainer_(),
-    elecSrc_(consumes<edm::View<pat::Electron> >(iConfig.getUntrackedParameter<edm::InputTag>("electronSrc"))),
+    elecSrc_(consumes<edm::View<pat::Electron> >(iConfig.getUntrackedParameter<edm::InputTag>("electronUnSSrc"))),
     elecUnSSrc_(consumes<edm::View<pat::Electron> >(iConfig.getUntrackedParameter<edm::InputTag>("electronUnSSrc"))),
     muonSrc_(consumes<edm::View<pat::Muon> >(iConfig.getUntrackedParameter<edm::InputTag>("muonSrc"))),
     tauSrc_(consumes<edm::View<pat::Tau> >(iConfig.getUntrackedParameter<edm::InputTag>("tauSrc"))),
@@ -1844,8 +1844,8 @@ UFHZZ4LAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         helper.cleanOverlappingLeptons(AllMuons,AllElectrons,PV);
         helper.cleanOverlappingLeptons(AllMuons,AllElectronsUnS,PV);
         recoMuons = helper.goodMuons2015_noIso_noPf(AllMuons,_muPtCut,PV,sip3dCut);
-        recoElectrons = helper.goodElectrons2015_noIso_noBdt(AllElectrons,_elecPtCut,elecID,PV,iEvent,sip3dCut);
-        recoElectronsUnS = helper.goodElectrons2015_noIso_noBdt(AllElectronsUnS,_elecPtCut,elecID,PV,iEvent,sip3dCut);
+        recoElectrons = helper.goodElectrons2015_noIso_noBdt(AllElectrons,_elecPtCut,elecID,PV,iEvent,sip3dCut, true);
+        recoElectronsUnS = helper.goodElectrons2015_noIso_noBdt(AllElectronsUnS,_elecPtCut,elecID,PV,iEvent,sip3dCut, false);
         helper.cleanOverlappingTaus(recoMuons,recoElectrons,AllTaus,isoCutMu,isoCutEl,muRho,elRho);
         recoTaus = helper.goodTaus2015(AllTaus,_tauPtCut);
         recoPhotons = helper.goodPhotons2015(AllPhotons,_phoPtCut,year);
@@ -1965,12 +1965,20 @@ UFHZZ4LAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                     lep_pterr.push_back(pterr);
                     lep_eta.push_back(recoElectrons[lep_ptindex[i]].eta());
                     lep_phi.push_back(recoElectrons[lep_ptindex[i]].phi());
-                    lep_mass.push_back(recoElectrons[lep_ptindex[i]].mass());
+//float corr_factor_user = 1;//recoElectrons[lep_ptindex[i]].userFloat("ecalTrkEnergyPostCorr") / recoElectrons[lep_ptindex[i]].energy();
+//float corr_factor_pt = recoElectrons[lep_ptindex[i]].pt() / recoElectronsUnS[lep_ptindex[i]].pt();
+//if(iEvent.id().event() == 630017)
+//	std::cout<<recoElectrons[lep_ptindex[i]].mass()<<"\t"<<recoElectrons[lep_ptindex[i]].mass()*corr_factor_pt<<std::endl;
+//std::cout<<corr_factor_user<<"\t"<<corr_factor_pt<<std::endl;
+//lep_mass.push_back(recoElectrons[lep_ptindex[i]].mass()*corr_factor_pt);
+		    lep_mass.push_back(recoElectrons[lep_ptindex[i]].mass());
                     lepFSR_pt.push_back(recoElectrons[lep_ptindex[i]].pt());
                     lepFSR_eta.push_back(recoElectrons[lep_ptindex[i]].eta());
                     lepFSR_phi.push_back(recoElectrons[lep_ptindex[i]].phi());
-                    lepFSR_mass.push_back(recoElectrons[lep_ptindex[i]].mass());
-                    lepFSR_ID.push_back(11);
+//std::cout<<recoElectrons[lep_ptindex[i]].mass()<<"\t"<<recoElectrons[lep_ptindex[i]].mass()*corr_factor_pt<<std::endl;
+//lepFSR_mass.push_back(recoElectrons[lep_ptindex[i]].mass()*corr_factor_pt);
+		    lepFSR_mass.push_back(recoElectrons[lep_ptindex[i]].mass());                    
+		    lepFSR_ID.push_back(11);
                     if (isoConeSizeEl==0.4) {
                         lep_RelIso.push_back(helper.pfIso(recoElectrons[lep_ptindex[i]],elRho));
                         lep_RelIsoNoFSR.push_back(helper.pfIso(recoElectrons[lep_ptindex[i]],elRho));

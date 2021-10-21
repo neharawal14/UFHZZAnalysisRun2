@@ -94,7 +94,7 @@ public:
     std::vector<pat::Tau> goodLooseTaus2015(edm::Handle<edm::View<pat::Tau> > Taus, double tauPtCut);
     std::vector<pat::Photon> goodLoosePhotons2015(edm::Handle<edm::View<pat::Photon> > Photons, double phoPtCut);
 
-    std::vector<pat::Electron> goodElectrons2015_noIso_noBdt(std::vector<pat::Electron> Electrons, double elecPtCut, std::string elecID, const reco::Vertex *&vertex,const edm::Event& iEvent, double sip3dCut); 
+    std::vector<pat::Electron> goodElectrons2015_noIso_noBdt(std::vector<pat::Electron> Electrons, double elecPtCut, std::string elecID, const reco::Vertex *&vertex,const edm::Event& iEvent, double sip3dCut, bool ScaleAndSmearing); 
     std::vector<pat::Muon> goodMuons2015_noIso_noPf(std::vector<pat::Muon> Muons, double muPtCut, const reco::Vertex *&vertex, double sip3dCut);
     std::vector<pat::Tau> goodTaus2015(std::vector<pat::Tau> Taus, double tauPtCut);
     std::vector<pat::Photon> goodPhotons2015(std::vector<pat::Photon> Photons, double phoPtCut, int year);
@@ -333,9 +333,11 @@ HZZ4LHelper::~HZZ4LHelper()
 std::vector<pat::Electron> HZZ4LHelper::goodLooseElectrons2012(edm::Handle<edm::View<pat::Electron> > Electrons, double elPtCut) {
     using namespace pat;
     using namespace std;    
-    vector<pat::Electron> bestElectrons;    
+    vector<pat::Electron> bestElectrons;
     for(edm::View<pat::Electron>::const_iterator elec=Electrons->begin(); elec!=Electrons->end(); ++elec) {        
-        if( abs(elec->eta()) < 2.5 && elec->pt() > elPtCut) {
+
+//        if( abs(elec->eta()) < 2.5 && elec->pt() > elPtCut) {
+        if( abs(elec->eta()) < 2.5 && elec->pt() > 0) {
             bestElectrons.push_back(*elec);
         }
     }
@@ -348,7 +350,9 @@ std::vector<pat::Electron> HZZ4LHelper::goodLooseElectrons2012(edm::Handle<edm::
     vector<pat::Electron> bestElectrons;
     vector <bool> Ele_passLoose;
     for(edm::View<pat::Electron>::const_iterator elec=Electrons->begin(); elec!=Electrons->end(); ++elec) {
-        if( abs(elec->eta()) < 2.5 && elec->pt() > elPtCut) {
+
+//        if( abs(elec->eta()) < 2.5 && elec->pt() > elPtCut) {
+        if( abs(elec->eta()) < 2.5 && elec->pt() > 0) {
             //bestElectrons.push_back(*elec);
             Ele_passLoose.push_back(true);
         }
@@ -439,7 +443,7 @@ std::vector<pat::Muon> HZZ4LHelper::goodMuons2015_noIso_noPf(std::vector<pat::Mu
 
 }
 
-std::vector<pat::Electron> HZZ4LHelper::goodElectrons2015_noIso_noBdt(std::vector<pat::Electron> Electrons, double elecPtCut, std::string elecID, const reco::Vertex *&vertex,const edm::Event& iEvent, double sip3dCut)
+std::vector<pat::Electron> HZZ4LHelper::goodElectrons2015_noIso_noBdt(std::vector<pat::Electron> Electrons, double elecPtCut, std::string elecID, const reco::Vertex *&vertex,const edm::Event& iEvent, double sip3dCut, bool ScaleAndSmearing)
 {
     using namespace edm;
     using namespace pat;
@@ -452,10 +456,30 @@ std::vector<pat::Electron> HZZ4LHelper::goodElectrons2015_noIso_noBdt(std::vecto
     double dxyCut = 0.5;
     double dzCut = 1;
 
+//std::cout<<Electrons.size()<<std::endl;
+
     for(unsigned int i = 0; i < Electrons.size(); i++) {
 
-        //std::cout<<"el pt: "<<Electrons[i].pt()<<" eta: "<<Electrons[i].eta()<<" phi: "<<Electrons[i].phi()<<std::endl;
+//std::cout<<"Before = "<<Electrons[i].pt()<<"\t"<<Electrons[i].eta()<<"\t"<<Electrons[i].phi()<<"\t"<<Electrons[i].mass()<<std::endl;
+if(ScaleAndSmearing){
+//std::cout<<"Before = "<<Electrons[i].pt()<<"\t"<<Electrons[i].eta()<<"\t"<<Electrons[i].phi()<<"\t"<<Electrons[i].mass()<<std::endl;
 
+	auto corrP4  = Electrons[i].p4() * Electrons[i].userFloat("ecalTrkEnergyPostCorr") / Electrons[i].energy();
+	Electrons[i].setP4(corrP4);
+
+//std::cout<<"After = "<<Electrons[i].pt()<<"\t"<<Electrons[i].eta()<<"\t"<<Electrons[i].phi()<<"\t"<<Electrons[i].mass()<<std::endl;
+//	if(Electrons[i].pt() < elecPtCut) continue;
+
+}
+else
+   elecPtCut = 5;
+
+//std::cout<<Electrons[i].pt()<<std::endl;
+
+
+
+        //std::cout<<"el pt: "<<Electrons[i].pt()<<" eta: "<<Electrons[i].eta()<<" phi: "<<Electrons[i].phi()<<std::endl;
+    if(Electrons[i].pt() > elecPtCut){
         if( abs(getSIP3D(Electrons[i])) < sip3dCut) {
             if (fabs(Electrons[i].gsfTrack()->dxy(vertex->position())) < dxyCut) {
                 if (fabs(Electrons[i].gsfTrack()->dz(vertex->position())) < dzCut ) {                  
@@ -465,7 +489,10 @@ std::vector<pat::Electron> HZZ4LHelper::goodElectrons2015_noIso_noBdt(std::vecto
             } //else {std::cout<<"el with pt "<<Electrons[i].pt()<<" failed dxyCut "<<fabs(Electrons[i].gsfTrack()->dxy(vertex->position())) <<std::endl;}
         } //else {std::cout<<"el with pt "<<Electrons[i].pt()<<" failed sip3dcut "<<abs(getSIP3D(Electrons[i]))<<std::endl;}
     }
-  
+}  
+
+//std::cout<<bestElectrons.size()<<std::endl;
+
     return bestElectrons;
 }
 
