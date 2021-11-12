@@ -25,12 +25,8 @@ process.options = cms.untracked.PSet(
         numberOfThreads = cms.untracked.uint32(2) )
 
 myfilelist = cms.untracked.vstring(
-'/store/mc/RunIISummer20UL17MiniAODv2/GluGluHToZZTo4L_M125_TuneCP5_13TeV_powheg2_JHUGenV7011_pythia8/MINIAODSIM/106X_mc2017_realistic_v9-v2/260000/EAE842F2-C4F5-4444-AA68-743D86F1C33B.root',
-#'/store/mc/RunIISummer20UL17MiniAODv2/GluGluHToZZTo4L_M125_TuneCP5_13TeV_powheg2_JHUGenV7011_pythia8/MINIAODSIM/106X_mc2017_realistic_v9-v2/260000/A2CD5129-03A7-464F-BF21-1722D37641F2.root',
-
-
 #'/store/mc/RunIISummer20UL17MiniAODv2/GluGluHToZZTo4L_M125_TuneCP5_13TeV_powheg2_JHUGenV7011_pythia8/MINIAODSIM/106X_mc2017_realistic_v9-v2/130000/3E4E8D55-3993-2B43-AF3B-7AB45BBE0BDA.root',
-#'/store/mc/RunIISummer20UL17MiniAOD/GluGluHToZZTo4L_M125_TuneCP5_13TeV_powheg2_JHUGenV7011_pythia8/MINIAODSIM/106X_mc2017_realistic_v6-v2/270000/794448BF-6D5B-7149-90C7-2F7D0F3E1DA6.root',        
+'/store/mc/RunIISummer20UL17MiniAOD/GluGluHToZZTo4L_M125_TuneCP5_13TeV_powheg2_JHUGenV7011_pythia8/MINIAODSIM/106X_mc2017_realistic_v6-v2/270000/794448BF-6D5B-7149-90C7-2F7D0F3E1DA6.root',        
 )
 
 process.source = cms.Source("PoolSource",fileNames = myfilelist,
@@ -39,7 +35,7 @@ process.source = cms.Source("PoolSource",fileNames = myfilelist,
                             )
 
 process.TFileService = cms.Service("TFileService",
-                                   fileName = cms.string("DUMMYFILENAME_2.root")
+                                   fileName = cms.string("DUMMYFILENAME.root")
 )
 
 # clean muons by segments 
@@ -141,8 +137,7 @@ process.load('UFHZZAnalysisRun2.FSRPhotons.fsrPhotons_cff')
 import os
 # Jet Energy Corrections
 from CondCore.DBCommon.CondDBSetup_cfi import *
-#era = "Fall17_17Nov2017_V6_MC"
-era = "Fall17_17Nov2017_V32_94X_MC"
+era = "Summer19UL17_V5_MC"
 # for HPC
 dBFile = os.environ.get('CMSSW_BASE')+"/src/UFHZZAnalysisRun2/UFHZZ4LAna/data/"+era+".db"
 # for crab
@@ -199,12 +194,14 @@ process.slimmedJetsAK8JEC = process.updatedPatJets.clone(
     )
 
 ### add pileup id and discriminant to patJetsReapplyJEC
+from RecoJets.JetProducers.PileupJetID_cfi import _chsalgos_106X_UL17
 process.load("RecoJets.JetProducers.PileupJetID_cfi")
 process.pileupJetIdUpdated = process.pileupJetId.clone(
     jets=cms.InputTag("slimmedJets"),
     inputIsCorrected=False,
     applyJec=True,
-    vertexes=cms.InputTag("offlineSlimmedPrimaryVertices")
+    vertexes=cms.InputTag("offlineSlimmedPrimaryVertices"),
+    algos=cms.VPSet(_chsalgos_106X_UL17),
 )
 process.slimmedJetsJEC.userData.userFloats.src += ['pileupJetIdUpdated:fullDiscriminant']
 process.slimmedJetsJEC.userData.userInts.src += ['pileupJetIdUpdated:fullId']
@@ -212,26 +209,29 @@ process.slimmedJetsJEC.userData.userInts.src += ['pileupJetIdUpdated:fullId']
 # JER
 process.load("JetMETCorrections.Modules.JetResolutionESProducer_cfi")
 # for hpc
-dBJERFile = os.environ.get('CMSSW_BASE')+"/src/UFHZZAnalysisRun2/UFHZZ4LAna/data/Fall17_V3_94X_MC.db"
+dBJERFile = os.environ.get('CMSSW_BASE')+"/src/UFHZZAnalysisRun2/UFHZZ4LAna/data/Summer19UL17_JRV3_MC.db"
 # for crab
-#dBJERFile = "src/UFHZZAnalysisRun2/UFHZZ4LAna/data/Fall17_V3_94X_MC.db"
+#dBJERFile = "src/UFHZZAnalysisRun2/UFHZZ4LAna/data/Summer19UL17_JRV3_MC.db"
 process.jer = cms.ESSource("PoolDBESSource",
         CondDBSetup,
         connect = cms.string("sqlite_file:"+dBJERFile),
         toGet = cms.VPSet(
             cms.PSet(
                 record = cms.string('JetResolutionRcd'),
-                tag    = cms.string('JR_Fall17_V3_94X_MC_PtResolution_AK4PFchs'),
+#                tag    = cms.string('JR_Fall17_V3_94X_MC_PtResolution_AK4PFchs'),
+                tag    = cms.string('JR_Summer19UL17_JRV3_MC_PtResolution_AK4PFchs'),
                 label  = cms.untracked.string('AK4PFchs_pt')
                 ),
             cms.PSet(
                 record = cms.string('JetResolutionRcd'),
-                tag    = cms.string('JR_Fall17_V3_94X_MC_PhiResolution_AK4PFchs'),
+#                tag    = cms.string('JR_Fall17_V3_94X_MC_PhiResolution_AK4PFchs'),
+                tag    = cms.string('JR_Summer19UL17_JRV3_MC_PhiResolution_AK4PFchs'),
                 label  = cms.untracked.string('AK4PFchs_phi')
                 ),
             cms.PSet(
                 record = cms.string('JetResolutionScaleFactorRcd'),
-                tag    = cms.string('JR_Fall17_V3_94X_MC_SF_AK4PFchs'),
+#                tag    = cms.string('JR_Fall17_V3_94X_MC_SF_AK4PFchs'),
+                tag    = cms.string('JR_Summer19UL17_JRV3_MC_SF_AK4PFchs'),
                 label  = cms.untracked.string('AK4PFchs')
                 )
             )
@@ -244,7 +244,7 @@ process.load("CondCore.CondDB.CondDB_cfi")
 qgDatabaseVersion = 'cmssw8020_v2'
 # for hpc
 QGdBFile = os.environ.get('CMSSW_BASE')+"/src/UFHZZAnalysisRun2/UFHZZ4LAna/data/QGL_"+qgDatabaseVersion+".db"
-# for crab
+# for crabQGdBFile = "src/UFHZZAnalysisRun2/UFHZZ4LAna/data/QGL_"+qgDatabaseVersion+".db"
 #QGdBFile = "src/UFHZZAnalysisRun2/UFHZZ4LAna/data/QGL_"+qgDatabaseVersion+".db"
 process.QGPoolDBESSource = cms.ESSource("PoolDBESSource",
       DBParameters = cms.PSet(messageLevel = cms.untracked.int32(1)),
@@ -281,12 +281,12 @@ runMetCorAndUncFromMiniAOD(process,
             isData=False,
             )
 
-from PhysicsTools.PatUtils.l1ECALPrefiringWeightProducer_cfi import l1ECALPrefiringWeightProducer
-process.prefiringweight = l1ECALPrefiringWeightProducer.clone(                                   
-            DataEra = cms.string("2017BtoF"), #Use 2016BtoH for 2016                                     
-            UseJetEMPt = cms.bool(False),                                                                
-            PrefiringRateSystematicUncty = cms.double(0.2),                                              
-            SkipWarnings = False)                                                                        
+#from PhysicsTools.PatUtils.l1ECALPrefiringWeightProducer_cfi import l1ECALPrefiringWeightProducer
+#process.prefiringweight = l1ECALPrefiringWeightProducer.clone(                                   
+#            DataEra = cms.string("2017BtoF"), #Use 2016BtoH for 2016                                     
+#            UseJetEMPt = cms.bool(False),                                                                
+#            PrefiringRateSystematicUncty = cms.double(0.2),                                              
+#            SkipWarnings = False)                                                                        
 
 # STXS
 process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
@@ -402,6 +402,6 @@ process.p = cms.Path(process.fsrPhotonSequence*
                      process.fullPatMetSequence*
                      process.corrJets*
                      process.mergedGenParticles*process.myGenerator*process.rivetProducerHTXS*#process.rivetProducerHZZFid*
-                     process.prefiringweight*
+#                     process.prefiringweight*
                      process.Ana
                      )
