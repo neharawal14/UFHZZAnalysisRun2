@@ -12,21 +12,26 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 process.load("Configuration.Geometry.GeometryRecoDB_cff")
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 process.load('Configuration.StandardSequences.Services_cff')
-process.GlobalTag.globaltag='106X_mcRun2_asymptotic_preVFP_v9'
+process.GlobalTag.globaltag='106X_mcRun2_asymptotic_v15'
 
 process.Timing = cms.Service("Timing",
                              summaryOnly = cms.untracked.bool(True)
                              )
 
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(15000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 process.options = cms.untracked.PSet(
 	numberOfThreads = cms.untracked.uint32(2) )
 
 myfilelist = cms.untracked.vstring(
+#'/store/mc/RunIISummer20UL16MiniAOD/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/106X_mcRun2_asymptotic_v13-v2/260000/003F1A76-9CDA-7644-A34E-923C4B1C0E5E.root'
+
 '/store/mc/RunIISummer19UL16MiniAOD/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/106X_mcRun2_asymptotic_v13-v2/100000/03C3B70E-A520-5C46-8C57-B1EBE48038CB.root',
-#'/store/mc/RunIISummer19UL16MiniAODAPV/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/106X_mcRun2_asymptotic_preVFP_v8-v1/100000/003DBF2A-A6DF-D746-B855-59A283679A4A.root',        
+
+
+#'/store/mc/RunIISummer19UL16MiniAODAPV/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/106X_mcRun2_asymptotic_preVFP_v8-v1/100000/003DBF2A-A6DF-D746-B855-59A283679A4A.root',
+#'/store/mc/RunIISummer19UL16MiniAOD/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/MINIAODSIM/106X_mcRun2_asymptotic_v13-v2/100000/003CFC21-E01F-8242-88BE-CCD60745FA62.root',
 #DUMMYFILELIST
         )
 
@@ -35,7 +40,7 @@ process.source = cms.Source("PoolSource",fileNames = myfilelist,
                             )
 
 process.TFileService = cms.Service("TFileService",
-                                   fileName = cms.string("DUMMYFILENAME_pre.root")
+                                   fileName = cms.string("DUMMYFILENAME.root")
 )
 
 # clean muons by segments 
@@ -51,9 +56,9 @@ process.boostedMuons = cms.EDProducer("PATMuonCleanerBySegments",
 process.calibratedMuons = cms.EDProducer("KalmanMuonCalibrationsProducer",
                                          muonsCollection = cms.InputTag("boostedMuons"),
                                          isMC = cms.bool(True),
-                                         isSync = cms.bool(False),
+                                         isSync = cms.bool(True),
                                          useRochester = cms.untracked.bool(True),
-                                         year = cms.untracked.int32(20160)
+                                         year = cms.untracked.int32(20165)
                                          )
 
 #from EgammaAnalysis.ElectronTools.regressionWeights_cfi import regressionWeights
@@ -183,7 +188,7 @@ era = "Summer16_07Aug2017_V11_MC"
 # for HPC
 dBFile = os.environ.get('CMSSW_BASE')+"/src/UFHZZAnalysisRun2/UFHZZ4LAna/data/"+era+".db"
 # for crab
-#dBFile = "src/UFHZZAnalysisRun2/UFHZZ4LAna/data/"+era+".db"
+dBFile = "src/UFHZZAnalysisRun2/UFHZZ4LAna/data/"+era+".db"
 process.jec = cms.ESSource("PoolDBESSource",
                            CondDBSetup,
                            connect = cms.string("sqlite_file:"+dBFile),
@@ -254,7 +259,7 @@ process.load("JetMETCorrections.Modules.JetResolutionESProducer_cfi")
 # for hpc
 dBJERFile = os.environ.get('CMSSW_BASE')+"/src/UFHZZAnalysisRun2/UFHZZ4LAna/data/Summer16_25nsV1_MC.db"
 # for crab
-#dBJERFile = "src/UFHZZAnalysisRun2/UFHZZ4LAna/data/Summer16_25nsV1_MC.db"
+dBJERFile = "src/UFHZZAnalysisRun2/UFHZZ4LAna/data/Summer16_25nsV1_MC.db"
 process.jer = cms.ESSource("PoolDBESSource",
         CondDBSetup,
         connect = cms.string("sqlite_file:"+dBJERFile),
@@ -285,7 +290,7 @@ qgDatabaseVersion = 'cmssw8020_v2'
 # for hpc
 QGdBFile = os.environ.get('CMSSW_BASE')+"/src/UFHZZAnalysisRun2/UFHZZ4LAna/data/QGL_"+qgDatabaseVersion+".db"
 # for crab
-#QGdBFile = "src/UFHZZAnalysisRun2/UFHZZ4LAna/data/QGL_"+qgDatabaseVersion+".db"
+QGdBFile = "src/UFHZZAnalysisRun2/UFHZZ4LAna/data/QGL_"+qgDatabaseVersion+".db"
 process.QGPoolDBESSource = cms.ESSource("PoolDBESSource",
       DBParameters = cms.PSet(messageLevel = cms.untracked.int32(1)),
       timetype = cms.string('runnumber'),
@@ -311,7 +316,7 @@ process.corrJets = cms.EDProducer ( "CorrJetsProducer",
                                     rho     = cms.InputTag( "fixedGridRhoFastjetAll"   ),
                                     payload = cms.string  ( "AK8PFchs" ),
                                     isData  = cms.bool    (  False ),
-                                    year = cms.untracked.int32(20160))
+                                    year = cms.untracked.int32(20165))
 
 
 # Recompute MET
@@ -358,7 +363,7 @@ process.Ana = cms.EDAnalyzer('UFHZZ4LAna',
                               #electronSrc  = cms.untracked.InputTag("electronsMVA"),
                               #electronUnSSrc  = cms.untracked.InputTag("electronsMVA"),
                               electronUnSSrc  = cms.untracked.InputTag("slimmedElectrons"),
- 				#                             electronSrc  = cms.untracked.InputTag("calibratedPatElectrons"),
+				#                              electronSrc  = cms.untracked.InputTag("calibratedPatElectrons"),
                               muonSrc      = cms.untracked.InputTag("calibratedMuons"),
                               tauSrc      = cms.untracked.InputTag("slimmedTaus"),
                               jetSrc       = cms.untracked.InputTag("slimmedJetsJEC"),
@@ -368,7 +373,7 @@ process.Ana = cms.EDAnalyzer('UFHZZ4LAna',
                               beamSpotSrc  = cms.untracked.InputTag("offlineBeamSpot"),
                               conversionSrc  = cms.untracked.InputTag("reducedEgamma","reducedConversions"),
                               isMC         = cms.untracked.bool(True),
-                              isSignal     = cms.untracked.bool(False),
+                              isSignal     = cms.untracked.bool(True),
                               mH           = cms.untracked.double(125.0),
                               CrossSection = cms.untracked.double(1),#DUMMYCROSSSECTION),
                               FilterEff    = cms.untracked.double(1),
@@ -421,11 +426,11 @@ process.Ana = cms.EDAnalyzer('UFHZZ4LAna',
                                 'HLT_IsoTkMu24_v',
                               ),
                               verbose = cms.untracked.bool(False),              
-                              skimLooseLeptons = cms.untracked.int32(2),              
-                              skimTightLeptons = cms.untracked.int32(2),              
+                              skimLooseLeptons = cms.untracked.int32(4),              
+                              skimTightLeptons = cms.untracked.int32(4),              
                               #bestCandMela = cms.untracked.bool(False),
 #                              verbose = cms.untracked.bool(True),              
-                              year = cms.untracked.int32(20160),
+                              year = cms.untracked.int32(20165),
                               isCode4l = cms.untracked.bool(False),
                              )
 
@@ -441,7 +446,7 @@ process.p = cms.Path(process.fsrPhotonSequence*
         #             process.electronsMVA*
                      process.egmPhotonIDSequence*
                      process.egammaPostRecoSeq*
-                     #			process.calibratedPatElectrons*
+ 			#                    process.calibratedPatElectrons*
                      process.jetSequence*
                      process.jetCorrFactors*
                      #process.pileupJetIdUpdated*

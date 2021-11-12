@@ -76,10 +76,10 @@ int HZZ4LJets::patjetID(const pat::Jet& jet, int year)
   double NEMF = jet.neutralEmEnergyFraction();
   double CHF = jet.chargedHadronEnergyFraction();
   double CHM = jet.chargedMultiplicity(); 
-  double CEMF = jet.chargedEmEnergyFraction();
+//  double CEMF = jet.chargedEmEnergyFraction();
   double NumConst = jet.chargedMultiplicity()+jet.neutralMultiplicity();
   double NumNeutralParticle =jet.neutralMultiplicity();
-  double MUF = jet.muonEnergyFraction();
+//  double MUF = jet.muonEnergyFraction();   //MUF  = pfjet->muonEnergyFraction();
 
   bool looseJetID=false;
   bool tightJetID=false;
@@ -90,54 +90,39 @@ int HZZ4LJets::patjetID(const pat::Jet& jet, int year)
   // 2017 Jet ID
   /*
   if (eta<=2.7) {
-
       looseJetID = ( (NHF<0.99 && NEMF<0.99 && NumConst>1) && ((eta<=2.4 && CHF>0 && CHM>0) || eta>2.4) && eta<=2.7);
       tightJetID = ( (NHF<0.90 && NEMF<0.90 && NumConst>1) && ((eta<=2.4 && CHF>0 && CHM>0) || eta>2.4) && eta<=2.7);
-
   } else if (eta>2.7 && eta<=3.0) {
-
       looseJetID = ( NEMF>0.02 && NEMF<0.99 && eta>2.7 && eta<=3.0 );
       tightJetID = ( NEMF>0.02 && NEMF<0.99 && NumNeutralParticle>2 && eta>2.7 && eta<=3.0 );
-
   } else if (eta>3.0) {
-
       looseJetID = ( NEMF<0.90 && NumNeutralParticle>10 && eta>3.0 );
       tightJetID = ( NEMF<0.90 && NHF>0.02 && NumNeutralParticle>10 && eta>3.0 );
-
   }
   */
+ 
   /*
   // 2018 Jet ID
   if (eta<=2.6) {
-
       looseJetID = ( CHM>0 && CHF>0 && NumConst>1 && NEMF<0.9 && NHF < 0.9 );
       tightJetID = ( CHM>0 && CHF>0 && NumConst>1 && NEMF<0.9 && NHF < 0.9 );
-
   } else if (eta>2.6 && eta<=2.7) {
-
       looseJetID = ( CHM>0 && NEMF<0.99 && NHF < 0.9 );
       tightJetID = ( CHM>0 && NEMF<0.99 && NHF < 0.9 );
-
   } else if (eta>2.7 && eta<=3.0) {
-
       looseJetID = ( NEMF>0.02 && NEMF<0.99 && NumNeutralParticle>2 );
       tightJetID = ( NEMF>0.02 && NEMF<0.99 && NumNeutralParticle>2 );
-
   } else if (eta>3.0) {
-
       looseJetID = (NEMF<0.90 && NHF>0.02 && NumNeutralParticle>10 ); 
       tightJetID = (NEMF<0.90 && NHF>0.02 && NumNeutralParticle>10 ); 
-
   }
   */
 /*
   if(year==2018)
   {
       if (eta<=2.6) {
-
           looseJetID = ( CHM>0 && CHF>0 && NumConst>1 && NEMF<0.9 && NHF < 0.9 );
           tightJetID = ( CHM>0 && CHF>0 && NumConst>1 && NEMF<0.9 && NHF < 0.9 );
-
       } else if (eta>2.6 && eta<=2.7) {
   
           looseJetID = ( CHM>0 && NEMF<0.99 && NHF < 0.9 );
@@ -160,7 +145,6 @@ int HZZ4LJets::patjetID(const pat::Jet& jet, int year)
   //tightJetID = ( NEMF<0.90 && NHF>0.2 && NumNeutralParticle>10 && abs(eta)>3.0 )
  
   }
-
   if(year==2017)
   {
       if (eta<=2.7) {
@@ -180,19 +164,26 @@ int HZZ4LJets::patjetID(const pat::Jet& jet, int year)
     
       }
   }
-*/  
-
-  if(year==2017 || year==2018) // UL 2017 - 2018
+*/
+// ============================ UL, same for 2017-18
+// https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID13TeVUL
+  if(year==2017 || year==2018)
   {
       if (eta<=2.6) {
 
-          looseJetID = ( CEMF<0.8 && CHM>0 && CHF>0 && NumConst>1 && NEMF<0.9 && MUF <0.8 && NHF < 0.9 );
-          tightJetID = ( CEMF<0.8 && CHM>0 && CHF>0 && NumConst>1 && NEMF<0.9 && MUF <0.8 && NHF < 0.9 );
+          looseJetID = ( CHM>0 && CHF>0 && NumConst>1 && NEMF<0.9 && NHF < 0.9 );
+          tightJetID = ( CHM>0 && CHF>0 && NumConst>1 && NEMF<0.9 && NHF < 0.9 );
+          //withLepVeto
+          //looseJetID = ( CEMF<0.8 && CHM>0 && CHF>0 && NumConst>1 && NEMF<0.9 && MUF <0.8 && NHF < 0.9 );
+          //tightJetID = ( CEMF<0.8 && CHM>0 && CHF>0 && NumConst>1 && NEMF<0.9 && MUF <0.8 && NHF < 0.9 );
 
       } else if (eta>2.6 && eta<=2.7) {
 
-          looseJetID = ( CEMF<0.8 && CHM>0 && NEMF<0.99 && MUF <0.8 && NHF < 0.9 );
-          tightJetID = ( CEMF<0.8 && CHM>0 && NEMF<0.99 && MUF <0.8 && NHF < 0.9 );
+          looseJetID = ( CHM>0 && NEMF<0.99 && NHF < 0.9 );
+          tightJetID = ( CHM>0 && NEMF<0.99 && NHF < 0.9 );
+          //withLepVeto
+          //looseJetID = ( CEMF<0.8 && CHM>0 && NEMF<0.99 && MUF <0.8 && NHF < 0.9 );
+          //tightJetID = ( CEMF<0.8 && CHM>0 && NEMF<0.99 && MUF <0.8 && NHF < 0.9 );
 
       } else if (eta>2.7 && eta<=3.0) {
 
@@ -206,24 +197,32 @@ int HZZ4LJets::patjetID(const pat::Jet& jet, int year)
 
       }
   }
-  
+
   if(year==20165 || year==20160)  //post and pre VFP
   {
-      if (eta<=2.7) {
+      //JetID = (abs(eta)<=2.4 && CEMF<0.8 && CHM>0 && CHF>0 && NumConst>1 && NEMF<0.9 && MUF <0.8 && NHF < 0.9 );
+      //JetID = ( abs(eta)>2.4 && abs(eta)<=2.7 && NEMF<0.99 && NHF < 0.9 );
+      //JetID = ( NEMF>0.0 && NEMF<0.99 && NHF<0.9 && NumNeutralParticle>1 && abs(eta)>2.7 && abs(eta)<=3.0 )
+      //JetID = (NEMF<0.90 && NHF>0.2 && NumNeutralParticle>10 && abs(eta)>3.0 )
+      if (eta<=2.4) {
 
-          looseJetID = ( (NHF<0.99 && NEMF<0.99 && NumConst>1) && ((eta<=2.4 && CHF>0 && CHM>0 && CEMF <0.99) || eta>2.4) && eta<=2.7);
-          tightJetID = ( (NHF<0.90 && NEMF<0.90 && NumConst>1) && ((eta<=2.4 && CHF>0 && CHM>0 && CEMF <0.99) || eta>2.4) && eta<=2.7);
+          looseJetID = ( CHM>0 && CHF>0 && NumConst>1 && NEMF<0.9 && NHF < 0.9 );
+          tightJetID = ( CHM>0 && CHF>0 && NumConst>1 && NEMF<0.9 && NHF < 0.9 );
+
+      } else if (eta>2.4 && eta<=2.7) {
+
+          looseJetID = ( NEMF<0.99 && NHF < 0.9 );
+          tightJetID = ( NEMF<0.99 && NHF < 0.9 );
 
       } else if (eta>2.7 && eta<=3.0) {
 
-          looseJetID = ( NEMF>0.01 && NHF<0.98 && NumNeutralParticle>2 && eta>2.7 && eta<=3.0 );
-          tightJetID = ( NEMF>0.01 && NHF<0.98 && NumNeutralParticle>2 && eta>2.7 && eta<=3.0 );
+          looseJetID = ( NEMF>0.0 && NEMF<0.99 && NHF<0.9 && NumNeutralParticle>1 );
+          tightJetID = ( NEMF>0.0 && NEMF<0.99 && NHF<0.9 && NumNeutralParticle>1 );
 
       } else if (eta>3.0) {
 
-          looseJetID = ( NEMF<0.90 && NumNeutralParticle>10 && eta>3.0 );
-          tightJetID = ( NEMF<0.90 && NumNeutralParticle>10 && eta>3.0 );
-
+          looseJetID = ( NEMF<0.90 && NHF>0.2 && NumNeutralParticle>10 );
+          tightJetID = ( NEMF<0.90 && NHF>0.2 && NumNeutralParticle>10 );
       }
   }
 
