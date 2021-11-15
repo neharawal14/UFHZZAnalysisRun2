@@ -15,7 +15,7 @@ import os
 config.section_('JobType')
 config.JobType.scriptExe = 'submitFileCrab.sh'
 #config.JobType.inputFiles = [os.environ.get('CMSSW_BASE')+'/src/ZZMatrixElement/MEKD',os.environ.get('CMSSW_BASE')+'/src/KinZfitter/KinZfitter/ParamZ1',os.environ.get('CMSSW_BASE')+'/src/KinZfitter/HelperFunction/hists',os.environ.get('CMSSW_BASE')+'/src/ZZMatrixElement/MELA']
-config.JobType.inputFiles = [os.environ.get('CMSSW_BASE')+'/src/ZZMatrixElement/MEKD',os.environ.get('CMSSW_BASE')+'/src/KinZfitter/KinZfitter/ParamZ1',os.environ.get('CMSSW_BASE')+'/src/KinZfitter/HelperFunction/hists']
+config.JobType.inputFiles = [os.environ.get('CMSSW_BASE')+'/src/KinZfitter/KinZfitter/ParamZ1',os.environ.get('CMSSW_BASE')+'/src/KinZfitter/HelperFunction/hists']
 config.JobType.psetName = 'CFGFILE'
 config.JobType.pluginName = 'Analysis'
 config.JobType.disableAutomaticOutputCollection = True
@@ -52,7 +52,7 @@ else:
   else: config.Data.unitsPerJob = 2
 
 config.Data.publication = False
-config.Data.outLFNDirBase = '/store/user/ferrico/UL_Summer19_cmssw10_6_12/UFHZZAnalysisRun2/JOBTAG/'
+config.Data.outLFNDirBase = '/store/user/ferrico/UL_Summer20_Rochester_s5m0/UFHZZAnalysisRun2/JOBTAG/'
 config.Data.ignoreLocality = True
 config.Data.allowNonValidInputDataset = True
 

@@ -1172,10 +1172,12 @@ UFHZZ4LAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if (isMC) {    
         edm::Handle< double > theprefweight;
             iEvent.getByToken(prefweight_token_, theprefweight ) ;
-            if (year == 20165 || year == 20160 || year == 2017)
+//            std::cout<<(*theprefweight)<<std::endl;
+
+//            if (year == 20165 || year == 20160 || year == 2017)
                 prefiringWeight =(*theprefweight);
-            else if (year == 2018)
-                prefiringWeight =1.0;
+//            else if (year == 2018)
+//                prefiringWeight =1.0;
     }
     else
         prefiringWeight =1.0;

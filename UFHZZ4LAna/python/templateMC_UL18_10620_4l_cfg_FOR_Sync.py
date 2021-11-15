@@ -295,6 +295,16 @@ runMetCorAndUncFromMiniAOD(process,
             isData=False,
             )
 
+from PhysicsTools.PatUtils.l1PrefiringWeightProducer_cfi import l1PrefiringWeightProducer
+process.prefiringweight = l1PrefiringWeightProducer.clone(
+		TheJets = cms.InputTag("slimmedJetsJEC"), #this should be the slimmedJets collection with up to date JECs !
+		DataEraECAL = cms.string("None"),
+		DataEraMuon = cms.string("20172018"),
+		UseJetEMPt = cms.bool(False),
+		PrefiringRateSystematicUnctyECAL = cms.double(0.2),
+		PrefiringRateSystematicUnctyMuon = cms.double(0.2)
+)
+
 # STXS
 process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
 process.mergedGenParticles = cms.EDProducer("MergedGenParticleProducer",
@@ -421,6 +431,7 @@ process.p = cms.Path(process.fsrPhotonSequence*
                      process.fullPatMetSequence*
                      process.corrJets*
                      process.mergedGenParticles*process.myGenerator*process.rivetProducerHTXS*#process.rivetProducerHZZFid*
+		     process.prefiringweight *
                      process.Ana
                      )
 

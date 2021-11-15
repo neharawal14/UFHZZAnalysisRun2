@@ -8,8 +8,8 @@ rm *.dat
 rm *.DAT
 rm br.sm*
 rm -rf Pdfdata
-cp -r ${CMSSW_BASE}/src/ZZMatrixElement/MELA/data/Pdfdata ${CMSSW_BASE}/src/
-MCFM_LIBS_PATH=${CMSSW_BASE}/src/ZZMatrixElement/MELA/data/slc7_amd64_gcc700/
+cp -r ${CMSSW_BASE}/src/JHUGenMELA/MELA/data/Pdfdata ${CMSSW_BASE}/src/
+MCFM_LIBS_PATH=${CMSSW_BASE}/src/JHUGenMELA/MELA/data/slc7_amd64_gcc700/
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${MCFM_LIBS_PATH}
 echo ${LD_LIBRARY_PATH}
 echo "================= DONE =========================="
@@ -19,8 +19,8 @@ echo "================= DONE =========================="
 echo "================= Copy Input Files ================"
 echo "${PWD}"
 
-rm -rf ${CMSSW_BASE}/src/ZZMatrixElement/MEKD
-mv ${CMSSW_BASE}/MEKD ${CMSSW_BASE}/src/ZZMatrixElement/
+#rm -rf ${CMSSW_BASE}/src/ZZMatrixElement/MEKD
+#mv ${CMSSW_BASE}/MEKD ${CMSSW_BASE}/src/ZZMatrixElement/
 
 #rm -rf ${CMSSW_BASE}/src/ZZMatrixElement/MELA
 #mv ${CMSSW_BASE}/MELA ${CMSSW_BASE}/src/ZZMatrixElement/
