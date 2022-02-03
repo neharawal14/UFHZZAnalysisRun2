@@ -646,7 +646,8 @@ void HZZ4LHelper::cleanOverlappingLeptons(std::vector<pat::Muon> &Muons, std::ve
 
     for( unsigned int i = 0; i < Muons.size(); i++ ) {
         if( Muons[i].pt() > muPtCut && abs(Muons[i].eta()) < muEtaCut &&
-            Muons[i].isPFMuon() == 1 &&
+	    passTight_Id(Muons[i], vertex) &&
+            //Muons[i].isPFMuon() == 1 &&
             (Muons[i].isGlobalMuon() || (Muons[i].isTrackerMuon() && Muons[i].numberOfMatches(/*reco::Muon::SegmentArbitration*/) > 0 /*numberOfMatchedStations() > 0*/ ) ) &&
             Muons[i].muonBestTrackType() != 2 ) {
             if( abs(getSIP3D(Muons[i])) < sip3dCut ) {	       

@@ -861,49 +861,52 @@ UFHZZ4LAna::UFHZZ4LAna(const edm::ParameterSet& iConfig) :
     	mela->setCandidateDecayMode(TVar::CandidateDecay_ZZ); 
 	}
 	
-	int YEAR = year - 2016;
-	if(year == 20165 || year == 20160)	YEAR = 0;
+	int YEAR = year - 2016 + 1;
+	if(year == 20165) YEAR = 1;
+	if(year == 20160) YEAR = 0;
    
     //string elec_scalefac_Cracks_name_161718[3] = {"egammaEffi.txt_EGM2D_cracks.root", "egammaEffi.txt_EGM2D_Moriond2018v1_gap.root", "egammaEffi.txt_EGM2D_Moriond2019_v1_gap.root"};
-    string elec_scalefac_Cracks_name_161718[3] = {"ElectronSF_Legacy_2016_Gap.root", "ElectronSF_Legacy_2017_Gap.root", "ElectronSF_Legacy_2018_Gap.root"};
+    string elec_scalefac_Cracks_name_161718[4] = {"ElectronSF_UL2016preVFP_gap.root", "ElectronSF_UL2016postVFP_gap.root", "ElectronSF_UL2017_gap.root", "ElectronSF_UL2018_gap.root"};
     edm::FileInPath elec_scalefacFileInPathCracks(("UFHZZAnalysisRun2/UFHZZ4LAna/data/"+elec_scalefac_Cracks_name_161718[YEAR]).c_str());
     TFile *fElecScalFacCracks = TFile::Open(elec_scalefacFileInPathCracks.fullPath().c_str());
     hElecScaleFac_Cracks = (TH2F*)fElecScalFacCracks->Get("EGamma_SF2D");    
     //string elec_scalefac_name_161718[3] = {"egammaEffi.txt_EGM2D.root", "egammaEffi.txt_EGM2D_Moriond2018v1.root", "egammaEffi.txt_EGM2D_Moriond2019_v1.root"};
-    string elec_scalefac_name_161718[3] = {"ElectronSF_Legacy_2016_NoGap.root", "ElectronSF_Legacy_2017_NoGap.root", "ElectronSF_Legacy_2018_NoGap.root"};
+    string elec_scalefac_name_161718[4] = {"ElectronSF_UL2016preVFP_nogap.root", "ElectronSF_UL2016postVFP_nogap.root", "ElectronSF_UL2017_nogap.root", "ElectronSF_UL2018_nogap.root"};
     edm::FileInPath elec_scalefacFileInPath(("UFHZZAnalysisRun2/UFHZZ4LAna/data/"+elec_scalefac_name_161718[YEAR]).c_str());
     TFile *fElecScalFac = TFile::Open(elec_scalefacFileInPath.fullPath().c_str());
     hElecScaleFac = (TH2F*)fElecScalFac->Get("EGamma_SF2D");    
 
     //string elec_Gsfscalefac_name_161718[3] = {"egammaEffi.txt_EGM2D_GSF.root", "egammaEffi.txt_EGM2D_Moriond2018v1_runBCDEF_passingRECO.root", "Ele_Reco_2018.root"};//was previous;
-    string elec_Gsfscalefac_name_161718[3] = {"Ele_Reco_2016.root", "Ele_Reco_2017.root", "Ele_Reco_2018.root"};
+    string elec_Gsfscalefac_name_161718[4] = {"egammaEffi_ptAbove20.txt_EGM2D_UL2016preVFP.root", "egammaEffi_ptAbove20.txt_EGM2D_UL2016postVFP.root", "egammaEffi_ptAbove20.txt_EGM2D_UL2017.root", "egammaEffi_ptAbove20.txt_EGM2D_UL2018.root"};
     edm::FileInPath elec_GsfscalefacFileInPath(("UFHZZAnalysisRun2/UFHZZ4LAna/data/"+elec_Gsfscalefac_name_161718[YEAR]).c_str());
     TFile *fElecScalFacGsf = TFile::Open(elec_GsfscalefacFileInPath.fullPath().c_str());
     hElecScaleFacGsf = (TH2F*)fElecScalFacGsf->Get("EGamma_SF2D");
 
     //string elec_GsfLowETscalefac_name_161718[3]= {"", "egammaEffi.txt_EGM2D_Moriond2018v1_runBCDEF_passingRECO_lowEt.root", "Ele_Reco_LowEt_2018.root"};//was previous
-    string elec_GsfLowETscalefac_name_161718[3]= {"Ele_Reco_LowEt_2016.root", "Ele_Reco_LowEt_2017.root", "Ele_Reco_LowEt_2018.root"};
+    string elec_GsfLowETscalefac_name_161718[4]= {"egammaEffi_ptBelow20.txt_EGM2D_UL2016preVFP.root", "egammaEffi_ptBelow20.txt_EGM2D_UL2016postVFP.root", "egammaEffi_ptBelow20.txt_EGM2D_UL2017.root", "egammaEffi_ptBelow20.txt_EGM2D_UL2018.root"};
     edm::FileInPath elec_GsfLowETscalefacFileInPath(("UFHZZAnalysisRun2/UFHZZ4LAna/data/"+elec_GsfLowETscalefac_name_161718[YEAR]).c_str());
     TFile *fElecScalFacGsfLowET = TFile::Open(elec_GsfLowETscalefacFileInPath.fullPath().c_str());
     hElecScaleFacGsfLowET = (TH2F*)fElecScalFacGsfLowET->Get("EGamma_SF2D");
 
     //string mu_scalefac_name_161718[3] = {"final_HZZ_Moriond17Preliminary_v4.root", "ScaleFactors_mu_Moriond2018_final.root", "final_HZZ_muon_SF_2018RunA2D_ER_2702.root"};//was previous; 
 //         string mu_scalefac_name_161718[3] = {"final_HZZ_SF_2016_legacy_mupogsysts.root", "final_HZZ_SF_2017_rereco_mupogsysts_3010.root", "final_HZZ_SF_2018_rereco_mupogsysts_3010.root"};
-        string mu_scalefac_name_161718[3] = {"final_HZZ_muon_SF_2016RunB2H_legacy_newLoose_newIso_paper.root", "final_HZZ_muon_SF_2017_newLooseIso_mupogSysts_paper.root", "final_HZZ_muon_SF_2018RunA2D_ER_newLoose_newIso_paper.root"};
+//         string mu_scalefac_name_161718[4] = {"final_HZZ_muon_SF_2016RunB2H_legacy_newLoose_newIso_paper.root", "final_HZZ_muon_SF_2016RunB2H_legacy_newLoose_newIso_paper.root", "final_HZZ_muon_SF_2017_newLooseIso_mupogSysts_paper.root", "final_HZZ_muon_SF_2018RunA2D_ER_newLoose_newIso_paper.root"};
+        string mu_scalefac_name_161718[4] = {"final_HZZ_muon_SF_2016UL_mupogsysts.root", "final_HZZ_muon_SF_2016UL_mupogsysts.root", "final_HZZ_muon_SF_2017UL_mupogsysts.root", "final_HZZ_muon_SF_2018UL_mupogsysts.root"};
     edm::FileInPath mu_scalefacFileInPath(("UFHZZAnalysisRun2/UFHZZ4LAna/data/"+mu_scalefac_name_161718[YEAR]).c_str());
     TFile *fMuScalFac = TFile::Open(mu_scalefacFileInPath.fullPath().c_str());
     hMuScaleFac = (TH2F*)fMuScalFac->Get("FINAL");
     hMuScaleFacUnc = (TH2F*)fMuScalFac->Get("ERROR");
 
     //string pileup_name_161718[3] = {"puWeightsMoriond17_v2.root", "puWeightsMoriond18.root", "pu_weights_2018.root"};///was previous
-    string pileup_name_161718[3] = {"pu_weights_2016.root", "pu_weights_2017.root", "pu_weights_2018.root"};
+//    string pileup_name_161718[3] = {"pu_weights_2016.root", "pu_weights_2017.root", "pu_weights_2018.root"};
+    string pileup_name_161718[4] = {"pileup_UL_2016_1plusShift.root", "pileup_UL_2016_1plusShift.root", "pileup_UL_2017_1plusShift.root", "pileup_UL_2018_1plusShift.root"};
     edm::FileInPath pileup_FileInPath(("UFHZZAnalysisRun2/UFHZZ4LAna/data/"+pileup_name_161718[YEAR]).c_str());
     TFile *f_pileup = TFile::Open(pileup_FileInPath.fullPath().c_str());
     h_pileup = (TH1D*)f_pileup->Get("weights");
     h_pileupUp = (TH1D*)f_pileup->Get("weights_varUp");
     h_pileupDn = (TH1D*)f_pileup->Get("weights_varDn");
 
-    string bTagEffi_name_161718[3] = {"bTagEfficiencies_2016.root", "bTagEfficiencies_2017.root", "bTagEfficiencies_2018.root"};
+    string bTagEffi_name_161718[4] = {"bTagEfficiencies_2016.root", "bTagEfficiencies_2016.root", "bTagEfficiencies_2017.root", "bTagEfficiencies_2018.root"};
     edm::FileInPath BTagEffiInPath(("UFHZZAnalysisRun2/UFHZZ4LAna/data/"+bTagEffi_name_161718[YEAR]).c_str());
     TFile *fbTagEffi = TFile::Open(BTagEffiInPath.fullPath().c_str());
     hbTagEffi = (TH2F*)fbTagEffi->Get("eff_b_M_ALL");
@@ -911,7 +914,8 @@ UFHZZ4LAna::UFHZZ4LAna(const edm::ParameterSet& iConfig) :
     hudsgTagEffi = (TH2F*)fbTagEffi->Get("eff_udsg_M_ALL");
 
     //BTag calibration
-    string csv_name_161718[3] = {"DeepCSV_2016LegacySF_V1.csv", "DeepCSV_106XUL17SF_V2p1.csv", "DeepCSV_106XUL18SF.csv"};
+//     string csv_name_161718[4] = {"DeepCSV_2016LegacySF_V1.csv", "DeepCSV_2016LegacySF_V1.csv", "DeepCSV_106XUL17SF_V2p1.csv", "DeepCSV_106XUL18SF.csv"};
+    string csv_name_161718[4] = {"DeepCSV_106XUL16preVFPSF_v1_hzz.csv", "DeepCSV_106XUL16postVFPSF_v2_hzz.csv", "wp_deepCSV_106XUL17_v3_hzz.csv", "wp_deepCSV_106XUL18_v2_hzz.csv"};
     edm::FileInPath btagfileInPath(("UFHZZAnalysisRun2/UFHZZ4LAna/data/"+csv_name_161718[YEAR]).c_str());
 
     BTagCalibration calib("DeepCSV", btagfileInPath.fullPath().c_str());
@@ -1653,6 +1657,7 @@ UFHZZ4LAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         nInt = npv;
         //pileupWeight = pileUp.getPUWeight(npv,PUVersion);
         pileupWeight = pileUp.getPUWeight(h_pileup,npv);
+//std::cout<<pileupWeight<<"\t"<<npv<<std::endl;
         pileupWeightUp = pileUp.getPUWeight(h_pileupUp,npv);
         pileupWeightDn = pileUp.getPUWeight(h_pileupDn,npv);
         if (verbose) cout<<"pileup weight = "<<pileupWeight<<", filling histograms"<<endl;
@@ -2447,7 +2452,7 @@ auto gen_lep = recoMuons[lep_ptindex[i]].genParticle();
 
                     double RelIsoNoFSR = (lep_isoCH[i]+std::max(lep_isoNH[i]+lep_isoPhot[i]-lep_isoPUcorr[i]-isoFSR,0.0))/lep_nofsr.Pt();
                     lep_RelIsoNoFSR[i] = RelIsoNoFSR;               
-                    if (verbose) cout<<"lep pt: "<<lep_nofsr.Pt()<<" eta: "<<lep_nofsr.Eta()<<" phi: "<<lep_nofsr.Phi()<<" RelIsoNoFSR: "<<RelIsoNoFSR<<" lep mva: "<<lep_mva[i]<<" tightId? "<<lep_tightId[i]<<endl;
+                    if (verbose) cout<<"lep id = "<<lep_id[i]<<"\tlep pt: "<<lep_nofsr.Pt()<<" eta: "<<lep_nofsr.Eta()<<" phi: "<<lep_nofsr.Phi()<<" RelIsoNoFSR: "<<RelIsoNoFSR<<" lep mva: "<<lep_mva[i]<<" tightId? "<<lep_tightId[i]<<endl;
                 }
                 if (verbose) {cout<<"finished filling fsr photon candidates"<<endl;}
             } // doFsrRecovery
@@ -2513,10 +2518,13 @@ auto gen_lep = recoMuons[lep_ptindex[i]].genParticle();
                     if (doJEC && (year==2017 || year==2018)) {
                         passPU = bool(jet.userInt("pileupJetIdUpdated:fullId") & (1 << 0));
                         jpumva=jet.userFloat("pileupJetIdUpdated:fullDiscriminant");
+                    } else if (doJEC && (year==20160 || year==20165)) { 
+                        passPU = bool(jet.userInt("pileupJetIdUpdated:fullId") & (1 << 2));
+                        jpumva=jet.userFloat("pileupJetIdUpdated:fullDiscriminant");
                     } else {
-                        passPU = bool(jet.userInt("pileupJetId:fullId") & (1 << 0));
+                        passPU = bool(jet.userInt("pileupJetId:fullId") & (1 << 2));
                         jpumva=jet.userFloat("pileupJetId:fullDiscriminant");
-                    }
+		     }
                     if (verbose) cout<< " jet pu mva  "<<jpumva <<endl;
                     /*
                     if(jet.pt()>20){
@@ -3558,7 +3566,7 @@ UFHZZ4LAna::beginRun(const edm::Run& iRun, const edm::EventSetup& iSetup)
                         std::cout<<pdfid<<std::endl;
                         std::string pdf_weight_id = pdfid.substr(12,4);
                         int pdf_weightid=atoi(pdf_weight_id.c_str());
-                        std::cout<<"parsed id: "<<pdf_weightid<<std::endl;
+//                         std::cout<<"parsed id: "<<pdf_weightid<<std::endl;
                         if (pdf_weightid==2001) {posNNPDF=int(pos);}
                         pos+=1;
                     }
@@ -3645,6 +3653,8 @@ UFHZZ4LAna::findHiggsCandidate(std::vector< pat::Muon > &selectedMuons, std::vec
             // same flavor opposite charge
             if((lep_id[i]+lep_id[j])!=0) continue;
 
+// std::cout<<i<<"\t"<<j<<"\t"<<std::endl;
+
             TLorentzVector li, lj;
             li.SetPtEtaPhiM(lep_pt[i],lep_eta[i],lep_phi[i],lep_mass[i]);
             lj.SetPtEtaPhiM(lep_pt[j],lep_eta[j],lep_phi[j],lep_mass[j]);
@@ -3722,6 +3732,11 @@ UFHZZ4LAna::findHiggsCandidate(std::vector< pat::Muon > &selectedMuons, std::vec
 
             if (i1 == j1 || i1 == j2 || i2 == j1 || i2 == j2) continue; // if there common leptons
 
+// 	std::cout<<"\t"<<i1<<"\t"<<i2<<"\t"<<std::endl;
+// 	std::cout<<"\t"<<j1<<"\t"<<j2<<"\t"<<std::endl;
+	
+
+
             TLorentzVector lep_i1, lep_i2, lep_j1, lep_j2;
             lep_i1.SetPtEtaPhiM(lepFSR_pt[i1],lepFSR_eta[i1],lepFSR_phi[i1],lepFSR_mass[i1]);
             lep_i2.SetPtEtaPhiM(lepFSR_pt[i2],lepFSR_eta[i2],lepFSR_phi[i2],lepFSR_mass[i2]);
@@ -3746,6 +3761,111 @@ UFHZZ4LAna::findHiggsCandidate(std::vector< pat::Muon > &selectedMuons, std::vec
             int Z2_lepindex[2] = {0,0};
             double Z1DeltaM, Z2SumPt;
 
+//////////////////////////////////////
+////////////// PAPER approach:
+////////////// 1) check tight leptons
+////////////// 2) closest Z boson to Z mass PDG
+//////////////////////////////////////
+
+			bool Iso11, Iso12, Iso21, Iso22;
+
+            if (lep_RelIsoNoFSR[i1]>((abs(lep_id[i1])==11) ? isoCutEl : isoCutMu)) Iso11 = 0;
+            else Iso11 = 1;
+            if (lep_RelIsoNoFSR[i2]>((abs(lep_id[i2])==11) ? isoCutEl : isoCutMu)) Iso12 = 0;
+            else Iso12 = 1;
+            if (lep_RelIsoNoFSR[j1]>((abs(lep_id[j1])==11) ? isoCutEl : isoCutMu)) Iso21 = 0;
+            else Iso21 = 1;
+            if (lep_RelIsoNoFSR[j2]>((abs(lep_id[j2])==11) ? isoCutEl : isoCutMu)) Iso22 = 0;
+            else Iso22 = 1;
+            
+// 				std::cout<<"\t\t"<<i1<<"\t"<<i2<<"\t"<<Zi.M()<<std::endl;
+// 				std::cout<<"\t\t"<<j1<<"\t"<<j2<<"\t"<<Zj.M()<<std::endl;
+
+// 				std::cout<<"ID = \t\t\t"<<lep_id[i1]<<"\t"<<lep_id[i2]<<"\t"<<lep_id[j1]<<"\t"<<lep_id[j2]<<std::endl;
+// 				std::cout<<"tight = \t\t\t"<<lep_tightId[i1]<<"\t"<<lep_tightId[i2]<<"\t"<<lep_tightId[j1]<<"\t"<<lep_tightId[j2]<<std::endl;
+// 				std::cout<<"ISO = \t\t\t"<<lep_RelIsoNoFSR[i1]<<"\t"<<lep_RelIsoNoFSR[i2]<<"\t"<<lep_RelIsoNoFSR[j1]<<"\t"<<lep_RelIsoNoFSR[j2]<<std::endl;
+// 				std::cout<<"isISO = \t\t\t"<<Iso11<<"\t"<<Iso12<<"\t"<<Iso21<<"\t"<<Iso22<<std::endl;
+// 	            if (abs(Zi.M()-Zmass)<abs(Zj.M()-Zmass))
+// 	            	std::cout<<"Zi closest than Zj"<<std::endl;
+//             	if (abs(Zj.M()-Zmass)<abs(Zi.M()-Zmass))
+// 	            	std::cout<<"Zj closest than Zi"<<std::endl;
+
+            if (lep_tightId[i1] && lep_tightId[i2]
+            	&& Iso11 && Iso12) { 
+					Z1index = i; Z2index = j;
+					Z1 = Zi; Z2 = Zj;                 
+					if (lep_i1.Pt()>lep_i2.Pt()) { Z1_lepindex[0] = i1;  Z1_lepindex[1] = i2; }
+					else { Z1_lepindex[0] = i2;  Z1_lepindex[1] = i1; }                
+					if (lep_j1.Pt()>lep_j2.Pt()) { Z2_lepindex[0] = j1;  Z2_lepindex[1] = j2; } 
+					else { Z2_lepindex[0] = j2;  Z2_lepindex[1] = j1; }                
+					Z1DeltaM = abs(Zi.M()-Zmass); 
+					Z2SumPt = lep_j1_nofsr.Pt()+lep_j2_nofsr.Pt();
+// 					std::cout<<"Zi tight and bigger"<<std::endl;
+            }
+            else if(lep_tightId[j1] && lep_tightId[j2]
+            	&& Iso21 && Iso22) {
+					Z1index = j; Z2index = i;
+					Z1 = Zj; Z2 = Zi; 
+					if (lep_j1.Pt()>lep_j2.Pt()) { Z1_lepindex[0] = j1;  Z1_lepindex[1] = j2; }
+					else { Z1_lepindex[0] = j2;  Z1_lepindex[1] = j1; }
+					if (lep_i1.Pt()>lep_i2.Pt()) { Z2_lepindex[0] = i1;  Z2_lepindex[1] = i2; }
+					else { Z2_lepindex[0] = i2;  Z2_lepindex[1] = i1; }
+					Z1DeltaM = abs(Zj.M()-Zmass); 
+					Z2SumPt = lep_i1_nofsr.Pt()+lep_i2_nofsr.Pt();
+// 					std::cout<<"Zj tight and bigger"<<std::endl;
+            }    
+            else{
+// 				std::cout<<"no tight Z bosons"<<std::endl;
+            	continue;     
+            }
+
+// 				std::cout<<"\t\t\t"<<i1<<"\t"<<i2<<"\t"<<Zi.M()<<std::endl;
+// 				std::cout<<"\t\t\t"<<j1<<"\t"<<j2<<"\t"<<Zj.M()<<std::endl;
+
+            if (verbose) {cout<<"ZZ candidate Z1->M() "<<Z1.M()<<" Z2->M() "<<Z2.M()<<endl;}
+
+if (lep_tightId[i1] && lep_tightId[i2]
+      	&& Iso11 && Iso12 && lep_tightId[j1] && lep_tightId[j2]
+       	&& Iso21 && Iso22) {
+
+				if (abs(Zi.M()-Zmass)<abs(Zj.M()-Zmass)) { 
+					Z1index = i; Z2index = j;
+					Z1 = Zi; Z2 = Zj;                 
+					if (lep_i1.Pt()>lep_i2.Pt()) { Z1_lepindex[0] = i1;  Z1_lepindex[1] = i2; }
+					else { Z1_lepindex[0] = i2;  Z1_lepindex[1] = i1; }                
+					if (lep_j1.Pt()>lep_j2.Pt()) { Z2_lepindex[0] = j1;  Z2_lepindex[1] = j2; } 
+					else { Z2_lepindex[0] = j2;  Z2_lepindex[1] = j1; }                
+					Z1DeltaM = abs(Zi.M()-Zmass); 
+					Z2SumPt = lep_j1_nofsr.Pt()+lep_j2_nofsr.Pt();
+				}
+				else { 
+					Z1index = j; Z2index = i;
+					Z1 = Zj; Z2 = Zi; 
+					if (lep_j1.Pt()>lep_j2.Pt()) { Z1_lepindex[0] = j1;  Z1_lepindex[1] = j2; }
+					else { Z1_lepindex[0] = j2;  Z1_lepindex[1] = j1; }
+					if (lep_i1.Pt()>lep_i2.Pt()) { Z2_lepindex[0] = i1;  Z2_lepindex[1] = i2; }
+					else { Z2_lepindex[0] = i2;  Z2_lepindex[1] = i1; }
+					Z1DeltaM = abs(Zj.M()-Zmass); 
+					Z2SumPt = lep_i1_nofsr.Pt()+lep_i2_nofsr.Pt();
+				}         
+
+            if (verbose) {cout<<"4 tight ZZ candidate Z1->M() "<<Z1.M()<<" Z2->M() "<<Z2.M()<<endl;}
+}
+
+//////////////////////////////////////
+////////////// PAPER approach:
+////////////// 1) check tight leptons
+////////////// 2) closest Z boson to Z mass PDG
+//////////////////////////////////////
+
+
+
+//////////////////////////////////////
+////////////// BBBBF approach:
+////////////// 1) closest Z boson to Z mass PDG
+////////////// 2) check tight leptons
+//////////////////////////////////////
+/*
             if (abs(Zi.M()-Zmass)<abs(Zj.M()-Zmass)) { 
                 Z1index = i; Z2index = j;
                 Z1 = Zi; Z2 = Zj;                 
@@ -3771,13 +3891,22 @@ UFHZZ4LAna::findHiggsCandidate(std::vector< pat::Muon > &selectedMuons, std::vec
 //                 else isMuon = false;
             }         
 
+            if (verbose) {cout<<"ZZ candidate Z1->M() "<<Z1.M()<<" Z2->M() "<<Z2.M()<<endl;}
+*/
+//////////////////////////////////////
+////////////// BBBBF approach:
+////////////// 1) closest Z boson to Z mass PDG
+////////////// 2) check tight leptons
+//////////////////////////////////////
+
+
             // Check isolation cut (without FSR ) for Z1 leptons
             if (lep_RelIsoNoFSR[Z1_lepindex[0]]>((abs(lep_id[Z1_lepindex[0]])==11) ? isoCutEl : isoCutMu)) continue; // checking iso with FSR removed
             if (lep_RelIsoNoFSR[Z1_lepindex[1]]>((abs(lep_id[Z1_lepindex[1]])==11) ? isoCutEl : isoCutMu)) continue; // checking iso with FSR removed
             // Check tight ID cut for Z1 leptons
             if (!(lep_tightId[Z1_lepindex[0]])) continue; // checking tight lepton ID
-            if (!(lep_tightId[Z1_lepindex[1]])) continue; // checking tight lepton ID 
-           
+            if (!(lep_tightId[Z1_lepindex[1]])) continue; // checking tight lepton ID
+          
             // Check Leading and Subleading pt Cut
             vector<double> allPt;
             allPt.push_back(lep_i1_nofsr.Pt()); allPt.push_back(lep_i2_nofsr.Pt());
@@ -3857,7 +3986,7 @@ UFHZZ4LAna::findHiggsCandidate(std::vector< pat::Muon > &selectedMuons, std::vec
             if (lep_RelIsoNoFSR[Z2_lepindex[0]]>((abs(lep_id[Z2_lepindex[0]])==11) ? isoCutEl : isoCutMu)) signalRegion=false; // checking iso with FSR removed
             if (lep_RelIsoNoFSR[Z2_lepindex[1]]>((abs(lep_id[Z2_lepindex[1]])==11) ? isoCutEl : isoCutMu)) signalRegion=false; // checking iso with FSR removed
             if (!(lep_tightId[Z2_lepindex[0]])) signalRegion=false; // checking tight lepton ID
-            if (!(lep_tightId[Z2_lepindex[1]])) signalRegion=false; // checking tight lepton ID          
+            if (!(lep_tightId[Z2_lepindex[1]])) signalRegion=false; // checking tight lepton ID  
             
             // Check if this candidate has the highest D_bkg_kin
             vector<TLorentzVector> P4s;
@@ -5435,8 +5564,10 @@ void UFHZZ4LAna::setTreeVariables( const edm::Event& iEvent, const edm::EventSet
         bool passPU_;
         if (doJEC && (year==2017 || year==2018)) {
              passPU_ = bool(goodJets[k].userInt("pileupJetIdUpdated:fullId") & (1 << 0));
-        } else {
-             passPU_ = bool(goodJets[k].userInt("pileupJetId:fullId") & (1 << 0));
+        } else if (doJEC && (year==20160 || year==20165)) {
+            passPU_ = bool(goodJets[k].userInt("pileupJetIdUpdated:fullId") & (1 << 2));
+	} else {
+              passPU_ = bool(goodJets[k].userInt("pileupJetId:fullId") & (1 << 0));
         }
 //         if(!(passPU_ || !doPUJetID || jet_jer->Pt()>50)) continue;
         if(!(passPU_ || !doPUJetID || goodJets[k].pt()>50)) continue;
@@ -5480,10 +5611,12 @@ void UFHZZ4LAna::setTreeVariables( const edm::Event& iEvent, const edm::EventSet
             jet_mass.push_back(jet_jer->M());
             if (doJEC && (year==2017 || year==2018)) {
                 jet_pumva.push_back(goodJets[k].userFloat("pileupJetIdUpdated:fullDiscriminant"));
-            } else {
-                jet_pumva.push_back(goodJets[k].userFloat("pileupJetId:fullDiscriminant"));
+            } else if (doJEC && (year==20160 || year==20165)) {
+               jet_pumva.push_back(goodJets[k].userFloat("pileupJetIdUpdated:fullDiscriminant"));
+            } 
+			else {
+				jet_pumva.push_back(goodJets[k].userFloat("pileupJetId:fullDiscriminant"));
             }
-            
 //             jet_csvv2.push_back(goodJets[k].bDiscriminator("pfDeepCSVDiscriminatorsJetTags:BvsAll"));
             jet_csvv2.push_back(goodJets[k].bDiscriminator("pfDeepCSVJetTags:probb")+goodJets[k].bDiscriminator("pfDeepCSVJetTags:probbb"));
             jet_csvv2_.push_back(goodJets[k].bDiscriminator("pfDeepCSVDiscriminatorsJetTags:BvsAll"));
