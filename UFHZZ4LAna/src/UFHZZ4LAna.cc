@@ -1848,8 +1848,8 @@ UFHZZ4LAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         vector<pat::Electron> AllElectrons; vector<pat::Muon> AllMuons; 
         vector<pat::Electron> AllElectronsUnS;////uncorrected electron 
         vector<pat::Tau> AllTaus; vector<pat::Photon> AllPhotons;
-        AllElectrons = helper.goodLooseElectrons2012(electrons,electronsUnS,_elecPtCut);
-        //AllElectrons = helper.goodLooseElectrons2012(electrons,_elecPtCut);
+        //AllElectrons = helper.goodLooseElectrons2012(electrons,electronsUnS,_elecPtCut);
+        AllElectrons = helper.goodLooseElectrons2012(electrons,_elecPtCut);
         AllElectronsUnS = helper.goodLooseElectrons2012(electrons,electronsUnS,_elecPtCut);
         AllMuons = helper.goodLooseMuons2012(muons,_muPtCut);
         AllTaus = helper.goodLooseTaus2015(taus,_tauPtCut);
