@@ -278,7 +278,7 @@ process.corrJets = cms.EDProducer ( "CorrJetsProducer",
                                     rho     = cms.InputTag( "fixedGridRhoFastjetAll"   ),
                                     payload = cms.string  ( "AK8PFchs" ),
                                     isData  = cms.bool    (  False ),
-                                    year = cms.untracked.int32(20165))
+                                    year = cms.untracked.int32(2016))
 
 
 # Recompute MET

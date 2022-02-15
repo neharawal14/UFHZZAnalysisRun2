@@ -74,7 +74,7 @@ setupEgammaPostRecoSeq(process,
                        runVID=True,
                        eleIDModules=['RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Summer18UL_ID_ISO_cff','RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV70_cff'],
                        phoIDModules=['RecoEgamma.PhotonIdentification.Identification.cutBasedPhotonID_Fall17_94X_V2_cff'],
-                       era='2018-Prompt')
+                       era='2018-UL')
 '''
 process.load("RecoEgamma.EgammaTools.calibratedEgammas_cff")
 #process.calibratedPatElectrons.correctionFile = "EgammaAnalysis/ElectronTools/data/ScalesSmearings/Run2018_Step2Closure_CoarseEtaR9Gain"

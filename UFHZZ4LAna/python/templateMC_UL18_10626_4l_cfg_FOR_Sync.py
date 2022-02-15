@@ -21,7 +21,7 @@ process.Timing = cms.Service("Timing",
                              )
 
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(5000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 process.options = cms.untracked.PSet(
         numberOfThreads = cms.untracked.uint32(2)
@@ -29,10 +29,9 @@ process.options = cms.untracked.PSet(
 
 myfilelist = cms.untracked.vstring(
 #'/store/mc/RunIISummer20UL18MiniAODv2/TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v1/00000/04A0B676-D63A-6D41-B47F-F4CF8CBE7DB8.root',
-'/store/mc/RunIISummer20UL18MiniAODv2/ZZTo4L_TuneCP5_13TeV_powheg_pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/110000/02E5DABE-70D4-A44F-BBC4-6D6C5749ABAE.root',
+#'/store/mc/RunIISummer20UL18MiniAODv2/ZZTo4L_TuneCP5_13TeV_powheg_pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/110000/02E5DABE-70D4-A44F-BBC4-6D6C5749ABAE.root',
 #'/store/mc/RunIISummer20UL18MiniAODv2/ZZTo4L_TuneCP5_13TeV_powheg_pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/110000/05BEC50D-DF68-1047-9C39-3CDD28EBDD42.root',
-
-#'/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToZZTo4L_M125_TuneCP5_13TeV_powheg2_JHUGenV7011_pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v1/30000/86509D01-06E8-5B41-82BC-C916A2857B71.root',
+'/store/mc/RunIISummer20UL18MiniAODv2/GluGluHToZZTo4L_M125_TuneCP5_13TeV_powheg2_JHUGenV7011_pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v1/30000/86509D01-06E8-5B41-82BC-C916A2857B71.root',
 #'/store/mc/RunIISummer20UL18MiniAODv2/VBF_HToZZTo4L_M125_TuneCP5_13TeV_powheg2_JHUGenV7011_pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/260000/41158F86-1652-F548-B786-6F87BEB7B7E9.root',
 
 
@@ -45,7 +44,7 @@ process.source = cms.Source("PoolSource",fileNames = myfilelist,
                             )
 
 process.TFileService = cms.Service("TFileService",
-                                   fileName = cms.string("DUMMYFILENAME_2018_L2.root")
+                                   fileName = cms.string("DUMMYFILENAME_2018_L2_old.root")
 )
 
 # clean muons by segments 
@@ -339,7 +338,7 @@ process.Ana = cms.EDAnalyzer('UFHZZ4LAna',
                               #electronSrc  = cms.untracked.InputTag("electronsMVA"),
                               #electronUnSSrc  = cms.untracked.InputTag("electronsMVA"),
                               electronUnSSrc  = cms.untracked.InputTag("slimmedElectrons"),
-         			#                     electronSrc  = cms.untracked.InputTag("calibratedPatElectrons"),
+ #        		      electronSrc  = cms.untracked.InputTag("calibratedPatElectrons"),
                               muonSrc      = cms.untracked.InputTag("calibratedMuons"),
 #                              muonSrc      = cms.untracked.InputTag("boostedMuons"),
                               tauSrc      = cms.untracked.InputTag("slimmedTaus"),

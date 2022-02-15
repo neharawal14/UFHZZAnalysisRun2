@@ -460,6 +460,10 @@ std::vector<pat::Electron> HZZ4LHelper::goodElectrons2015_noIso_noBdt(std::vecto
 
     for(unsigned int i = 0; i < Electrons.size(); i++) {
 
+//std::cout<<ScaleAndSmearing<<"\t"<<Electrons[i].energy()<<std::endl;
+
+
+
 //std::cout<<"Before = "<<Electrons[i].pt()<<"\t"<<Electrons[i].eta()<<"\t"<<Electrons[i].phi()<<"\t"<<Electrons[i].mass()<<std::endl;
 if(ScaleAndSmearing){
 //std::cout<<"Before = "<<Electrons[i].pt()<<"\t"<<Electrons[i].eta()<<"\t"<<Electrons[i].phi()<<"\t"<<Electrons[i].mass()<<std::endl;
@@ -474,6 +478,8 @@ if(ScaleAndSmearing){
 else
    elecPtCut = 5;
 
+//std::cout<<ScaleAndSmearing<<"\t"<<Electrons[i].energy()<<std::endl;
+//std::cout<<"\t"<<std::endl;
 //std::cout<<Electrons[i].pt()<<std::endl;
 
 

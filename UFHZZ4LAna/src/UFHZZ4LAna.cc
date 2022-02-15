@@ -733,6 +733,7 @@ private:
 
 UFHZZ4LAna::UFHZZ4LAna(const edm::ParameterSet& iConfig) :
     histContainer_(),
+    //elecSrc_(consumes<edm::View<pat::Electron> >(iConfig.getUntrackedParameter<edm::InputTag>("electronSrc"))),
     elecSrc_(consumes<edm::View<pat::Electron> >(iConfig.getUntrackedParameter<edm::InputTag>("electronUnSSrc"))),
     elecUnSSrc_(consumes<edm::View<pat::Electron> >(iConfig.getUntrackedParameter<edm::InputTag>("electronUnSSrc"))),
     muonSrc_(consumes<edm::View<pat::Muon> >(iConfig.getUntrackedParameter<edm::InputTag>("muonSrc"))),
@@ -1847,8 +1848,8 @@ UFHZZ4LAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         vector<pat::Electron> AllElectrons; vector<pat::Muon> AllMuons; 
         vector<pat::Electron> AllElectronsUnS;////uncorrected electron 
         vector<pat::Tau> AllTaus; vector<pat::Photon> AllPhotons;
-        //                  AllElectrons = helper.goodLooseElectrons2012(electrons,electronsUnS,_elecPtCut);
-        AllElectrons = helper.goodLooseElectrons2012(electrons,_elecPtCut);
+        AllElectrons = helper.goodLooseElectrons2012(electrons,electronsUnS,_elecPtCut);
+        //AllElectrons = helper.goodLooseElectrons2012(electrons,_elecPtCut);
         AllElectronsUnS = helper.goodLooseElectrons2012(electrons,electronsUnS,_elecPtCut);
         AllMuons = helper.goodLooseMuons2012(muons,_muPtCut);
         AllTaus = helper.goodLooseTaus2015(taus,_tauPtCut);
@@ -1967,10 +1968,10 @@ UFHZZ4LAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 					lep_pt_genFromReco.push_back(-999);
 // 				    lep_pt_UnS.push_back(recoElectronsUnS[lep_ptindex[i]].pt());
 // 				    lep_pterrold_UnS.push_back(recoElectronsUnS[lep_ptindex[i]].p4Error(reco::GsfElectron::P4_COMBINATION));
-//                     lep_errPre_Scale.push_back(recoElectrons[lep_ptindex[i]].userFloat("ecalTrkEnergyPreCorr"));
-//                     lep_errPost_Scale.push_back(recoElectrons[lep_ptindex[i]].userFloat("ecalTrkEnergyPostCorr"));
-//                     lep_errPre_noScale.push_back(recoElectronsUnS[lep_ptindex[i]].userFloat("ecalTrkEnergyPreCorr"));
-//                     lep_errPost_noScale.push_back(recoElectronsUnS[lep_ptindex[i]].userFloat("ecalTrkEnergyPostCorr"));
+                     lep_errPre_Scale.push_back(recoElectrons[lep_ptindex[i]].userFloat("ecalTrkEnergyPreCorr"));
+                     lep_errPost_Scale.push_back(recoElectrons[lep_ptindex[i]].userFloat("ecalTrkEnergyPostCorr"));
+                     lep_errPre_noScale.push_back(recoElectronsUnS[lep_ptindex[i]].userFloat("ecalTrkEnergyPreCorr"));
+                     lep_errPost_noScale.push_back(recoElectronsUnS[lep_ptindex[i]].userFloat("ecalTrkEnergyPostCorr"));
 
                     double perr = 0.0;
                     if (recoElectrons[lep_ptindex[i]].ecalDriven()) {
@@ -2183,6 +2184,14 @@ auto gen_lep = recoMuons[lep_ptindex[i]].genParticle();
                     lep_dataMC.push_back(helper.dataMC(recoMuons[lep_ptindex[i]],hMuScaleFac));
                     lep_dataMCErr.push_back(helper.dataMCErr(recoMuons[lep_ptindex[i]],hMuScaleFacUnc));
                     lep_genindex.push_back(-1.0);
+
+                     lep_errPre_Scale.push_back(-999);
+                     lep_errPost_Scale.push_back(-999);
+                     lep_errPre_noScale.push_back(-999);
+                     lep_errPost_noScale.push_back(-999);
+
+
+
                 }
 
 //                 std::cout<<"OK muoni"<<std::endl;
