@@ -26,7 +26,7 @@
 #/VBF_HToZZTo4L_M124_TuneCP5_13TeV_powheg2_JHUGenV7011_pythia8/RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2/MINIAODSIM 0.0009537624
 #/WplusH_HToZZTo4L_M124_TuneCP5_13TeV_powheg2-minlo-HWJ_JHUGenV7011_pythia8/RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2/MINIAODSIM 0.0002154715
 #/WminusH_HToZZTo4L_M124_TuneCP5_13TeV_powheg2-minlo-HWJ_JHUGenV7011_pythia8/RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2/MINIAODSIM 0.000136724
-########/ZH_HToZZ_4LFilter_M124_13TeV_powheg2-minlo-HZJ_JHUGenV7011_pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM 0.00061534
+#/ZH_HToZZ_4LFilter_M124_TuneCP5_13TeV_powheg2-minlo-HZJ_JHUGenV7011_pythia8/RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2/MINIAODSIM 0.00061534
 #/ttH_HToZZ_4LFilter_M124_TuneCP5_13TeV_powheg2_JHUGenV7011_pythia8/RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2/MINIAODSIM 0.0003628096931
 #/bbH_HToZZTo4L_M124_TuneCP2_13TeV-jhugenv7011-pythia8/RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2/MINIAODSIM 0.00012507498
 ##############################################
@@ -60,18 +60,16 @@
 #/GluGluToContinToZZTo4mu_TuneCP5_13TeV-mcfm701-pythia8/RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2/MINIAODSIM 0.00158549
 #/GluGluToContinToZZTo4tau_TuneCP5_13TeV-mcfm701-pythia8/RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2/MINIAODSIM 0.00158549
 #/WZTo3LNu_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2/MINIAODSIM 4.67
-/TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8/RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v1/MINIAODSIM 87.3
+#/TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8/RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v1/MINIAODSIM 87.3
 ######/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2/MINIAODSIM 1.0
 #/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL17MiniAODv2-106X_mc2017_realistic_v9-v2/MINIAODSIM 1.0
 ######/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14_ext1-v1/MINIAODSIM 6225.4
 ################################
 ### -------- DATA ---------- ###
 ################################
-#
-## MUON
 #/SingleMuon/Run2017B-UL2017_MiniAODv2-v1/MINIAOD 1.0
 #/SingleMuon/Run2017C-UL2017_MiniAODv2-v1/MINIAOD 1.0
-#/SingleMuon/Run2017D-UL2017_MiniAODv2-v1/MINIAOD 1.0
+/SingleMuon/Run2017D-UL2017_MiniAODv2-v1/MINIAOD 1.0
 #/SingleMuon/Run2017E-UL2017_MiniAODv2-v1/MINIAOD 1.0
 #/SingleMuon/Run2017F-UL2017_MiniAODv2-v1/MINIAOD 1.0
 #/SingleElectron/Run2017B-UL2017_MiniAODv2-v1/MINIAOD 1.0
@@ -83,20 +81,17 @@
 #/DoubleMuon/Run2017C-UL2017_MiniAODv2-v1/MINIAOD 1.0
 #/DoubleMuon/Run2017D-UL2017_MiniAODv2-v1/MINIAOD 1.0
 #/DoubleMuon/Run2017E-UL2017_MiniAODv2-v2/MINIAOD 1.0
-#/DoubleMuon/Run2017F-UL2017_MiniAODv2-v1/MINIAOD 1.0
+/DoubleMuon/Run2017F-UL2017_MiniAODv2-v1/MINIAOD 1.0
 #/DoubleEG/Run2017B-UL2017_MiniAODv2-v1/MINIAOD 1.0
-#/DoubleEG/Run2017C-UL2017_MiniAODv2-v1/MINIAOD 1.0
+#/DoubleEG/Run2017C-UL2017_MiniAODv2-v2/MINIAOD 1.0
 #/DoubleEG/Run2017D-UL2017_MiniAODv2-v1/MINIAOD 1.0
 #/DoubleEG/Run2017E-UL2017_MiniAODv2-v1/MINIAOD 1.0
-#/DoubleEG/Run2017F-UL2017_MiniAODv2-v1/MINIAOD 1.0
+#/DoubleEG/Run2017F-UL2017_MiniAODv2-v2/MINIAOD 1.0
 #/MuonEG/Run2017B-UL2017_MiniAODv2-v1/MINIAOD 1.0
 #/MuonEG/Run2017C-UL2017_MiniAODv2-v1/MINIAOD 1.0
 #/MuonEG/Run2017D-UL2017_MiniAODv2-v1/MINIAOD 1.0
 #/MuonEG/Run2017E-UL2017_MiniAODv2-v1/MINIAOD 1.0
 #/MuonEG/Run2017F-UL2017_MiniAODv2-v1/MINIAOD 1.0
-#
-## ELECTRON
-#                                                  
 ###################################################
 ###############     J/Psi and Y      ##############
 ###################################################
