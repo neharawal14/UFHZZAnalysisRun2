@@ -827,6 +827,9 @@ UFHZZ4LAna::UFHZZ4LAna(const edm::ParameterSet& iConfig) :
   
     if(!isMC){reweightForPU = false;}
     
+//     if(verbose)
+    	std::cout<<"bestCandMela = "<<bestCandMela<<std::endl;
+    
 //     if(!isCode4l)
 //     	std::cout<<"OK"<<std::endl;
 
@@ -2033,7 +2036,13 @@ UFHZZ4LAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                     lep_mva.push_back(recoElectrons[lep_ptindex[i]].userFloat(EleBDT_name_161718.c_str())); 
                     lep_ecalDriven.push_back(recoElectrons[lep_ptindex[i]].ecalDriven()); 
                     //lep_tightId.push_back(helper.passTight_BDT_Id(recoElectrons[lep_ptindex[i]],recoElectrons[lep_ptindex[i]].userFloat("ElectronMVAEstimatorRun2Autumn18IdIsoValues"), year));           
+
+
+
                     lep_tightId.push_back(helper.passTight_BDT_Id(recoElectronsUnS[lep_ptindex[i]],year));
+//                     lep_tightId.push_back(helper.passTight_BDT_Id(recoElectrons[lep_ptindex[i]],year));
+
+
                     //lep_tightId_old.push_back(helper.passTight_BDT_Id(recoElectronsUnS[lep_ptindex[i]],year));
                     //cout<<"old "<<recoElectrons[lep_ptindex[i]].userFloat("ElectronMVAEstimatorRun2Spring15NonTrig25nsV1Values") <<" new" <<recoElectrons[lep_ptindex[i]].userFloat("ElectronMVAEstimatorRun2Spring16HZZV1Values")<<endl;
                     lep_tightIdSUS.push_back(helper.passTight_Id_SUS(recoElectrons[lep_ptindex[i]],elecID,PV,BS,*theConversions, year));           
@@ -3735,6 +3744,9 @@ UFHZZ4LAna::findHiggsCandidate(std::vector< pat::Muon > &selectedMuons, std::vec
 
     for (int i=0; i<n_Zs; i++) {
         for (int j=i+1; j<n_Zs; j++) {
+        
+        
+        	if(verbose) std::cout<<"Start a new ZZ pair: "<<i<<"\t"<<j<<std::endl;
  
             int i1 = Z_lepindex1[i]; int i2 = Z_lepindex2[i];                            
             int j1 = Z_lepindex1[j]; int j2 = Z_lepindex2[j];                            
@@ -3809,7 +3821,10 @@ UFHZZ4LAna::findHiggsCandidate(std::vector< pat::Muon > &selectedMuons, std::vec
 					else { Z2_lepindex[0] = j2;  Z2_lepindex[1] = j1; }                
 					Z1DeltaM = abs(Zi.M()-Zmass); 
 					Z2SumPt = lep_j1_nofsr.Pt()+lep_j2_nofsr.Pt();
-// 					std::cout<<"Zi tight and bigger"<<std::endl;
+		        	if(verbose){
+						std::cout<<Zi.M()<<"\t"<<Z1DeltaM<<std::endl;
+						std::cout<<"Zi tight and bigger"<<std::endl;
+		        	}
             }
             else if(lep_tightId[j1] && lep_tightId[j2]
             	&& Iso21 && Iso22) {
@@ -3821,7 +3836,10 @@ UFHZZ4LAna::findHiggsCandidate(std::vector< pat::Muon > &selectedMuons, std::vec
 					else { Z2_lepindex[0] = i2;  Z2_lepindex[1] = i1; }
 					Z1DeltaM = abs(Zj.M()-Zmass); 
 					Z2SumPt = lep_i1_nofsr.Pt()+lep_i2_nofsr.Pt();
-// 					std::cout<<"Zj tight and bigger"<<std::endl;
+		        	if(verbose){
+						std::cout<<Zj.M()<<"\t"<<Z1DeltaM<<std::endl;
+						std::cout<<"Zj tight and bigger"<<std::endl;
+					}
             }    
             else{
 // 				std::cout<<"no tight Z bosons"<<std::endl;
@@ -3846,6 +3864,10 @@ if (lep_tightId[i1] && lep_tightId[i2]
 					else { Z2_lepindex[0] = j2;  Z2_lepindex[1] = j1; }                
 					Z1DeltaM = abs(Zi.M()-Zmass); 
 					Z2SumPt = lep_j1_nofsr.Pt()+lep_j2_nofsr.Pt();
+		        	if(verbose){
+						std::cout<<"4 tight \t" <<Zi.M()<<"\t"<<Z1DeltaM<<std::endl;
+						std::cout<<"Zi tight and bigger"<<std::endl;
+					}
 				}
 				else { 
 					Z1index = j; Z2index = i;
@@ -3856,9 +3878,15 @@ if (lep_tightId[i1] && lep_tightId[i2]
 					else { Z2_lepindex[0] = i2;  Z2_lepindex[1] = i1; }
 					Z1DeltaM = abs(Zj.M()-Zmass); 
 					Z2SumPt = lep_i1_nofsr.Pt()+lep_i2_nofsr.Pt();
+		        	if(verbose){
+						std::cout<<"4 tight \t" <<Zj.M()<<"\t"<<Z1DeltaM<<std::endl;
+						std::cout<<"Zj tight and bigger"<<std::endl;
+					}
 				}         
 
             if (verbose) {cout<<"4 tight ZZ candidate Z1->M() "<<Z1.M()<<" Z2->M() "<<Z2.M()<<endl;}
+            if (verbose) cout<<"4 tight ZZ candidate Z1->M() "<<Z1.M()<<" Z2->M() "<<Z2.M()<<endl;
+
 }
 
 //////////////////////////////////////
@@ -4657,6 +4685,7 @@ if (lep_tightId[i1] && lep_tightId[i2]
     }
 
 }
+
 
 //Find Z + 1L candidate for fake rate study
 void

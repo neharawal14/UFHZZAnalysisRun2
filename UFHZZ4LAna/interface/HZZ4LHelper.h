@@ -335,10 +335,11 @@ std::vector<pat::Electron> HZZ4LHelper::goodLooseElectrons2012(edm::Handle<edm::
     using namespace std;    
     vector<pat::Electron> bestElectrons;
     for(edm::View<pat::Electron>::const_iterator elec=Electrons->begin(); elec!=Electrons->end(); ++elec) {        
-
+//	std::cout<<"Loose = "<<elec->pt()<<std::endl;
 //        if( abs(elec->eta()) < 2.5 && elec->pt() > elPtCut) {
         if( abs(elec->eta()) < 2.5 && elec->pt() > 0) {
             bestElectrons.push_back(*elec);
+//		std::cout<<"Loose = "<<elec->pt()<<std::endl;
         }
     }
     return bestElectrons;    
@@ -355,6 +356,8 @@ std::vector<pat::Electron> HZZ4LHelper::goodLooseElectrons2012(edm::Handle<edm::
         if( abs(elec->eta()) < 2.5 && elec->pt() > 0) {
             //bestElectrons.push_back(*elec);
             Ele_passLoose.push_back(true);
+//                                std::cout<<"Loose passed 2 = "<<elec->pt()<<std::endl;
+
         }
         else    Ele_passLoose.push_back(false);
     }
@@ -362,7 +365,9 @@ std::vector<pat::Electron> HZZ4LHelper::goodLooseElectrons2012(edm::Handle<edm::
     for(edm::View<pat::Electron>::const_iterator elec_=ElectronsUnS->begin(); elec_!=ElectronsUnS->end(); ++elec_) {
         if(Ele_passLoose[i]) {
             bestElectrons.push_back(*elec_);
-        }
+//		                std::cout<<"Loose passed UnS = "<<elec_->pt()<<std::endl;
+ 
+       }
         i++;
     }
     return bestElectrons;
@@ -456,27 +461,36 @@ std::vector<pat::Electron> HZZ4LHelper::goodElectrons2015_noIso_noBdt(std::vecto
     double dxyCut = 0.5;
     double dzCut = 1;
 
-//std::cout<<Electrons.size()<<std::endl;
+//std::cout<<"SIZE good = "<<Electrons.size()<<" with Scale = "<<ScaleAndSmearing<<std::endl;
 
     for(unsigned int i = 0; i < Electrons.size(); i++) {
 
 //std::cout<<ScaleAndSmearing<<"\t"<<Electrons[i].energy()<<std::endl;
-
-
-
 //std::cout<<"Before = "<<Electrons[i].pt()<<"\t"<<Electrons[i].eta()<<"\t"<<Electrons[i].phi()<<"\t"<<Electrons[i].mass()<<std::endl;
+
+
 if(ScaleAndSmearing){
-//std::cout<<"Before = "<<Electrons[i].pt()<<"\t"<<Electrons[i].eta()<<"\t"<<Electrons[i].phi()<<"\t"<<Electrons[i].mass()<<std::endl;
-
+//std::cout<<"Before = 2  "<<Electrons[i].pt()<<"\t"<<Electrons[i].eta()<<"\t"<<Electrons[i].phi()<<"\t"<<Electrons[i].mass()<<std::endl;
+	float old_pt = Electrons[i].pt();
+	
 	auto corrP4  = Electrons[i].p4() * Electrons[i].userFloat("ecalTrkEnergyPostCorr") / Electrons[i].energy();
 	Electrons[i].setP4(corrP4);
 
 //std::cout<<"After = "<<Electrons[i].pt()<<"\t"<<Electrons[i].eta()<<"\t"<<Electrons[i].phi()<<"\t"<<Electrons[i].mass()<<std::endl;
 //	if(Electrons[i].pt() < elecPtCut) continue;
 
+	if(Electrons[i].pt() < 7 && old_pt > 7){
+		std::cout<<"Strange combination"<<std::endl;
+		elecPtCut = 5;
+	}
+
 }
-else
+else{
    elecPtCut = 5;
+//	std::cout<<"into the else"<<std::endl;
+}
+
+
 
 //std::cout<<ScaleAndSmearing<<"\t"<<Electrons[i].energy()<<std::endl;
 //std::cout<<"\t"<<std::endl;
@@ -484,20 +498,37 @@ else
 
 
 
-        //std::cout<<"el pt: "<<Electrons[i].pt()<<" eta: "<<Electrons[i].eta()<<" phi: "<<Electrons[i].phi()<<std::endl;
+//     std::cout<<"el pt: "<<Electrons[i].pt()<<" eta: "<<Electrons[i].eta()<<" phi: "<<Electrons[i].phi()<<std::endl;
+
+//std::cout<<Electrons[i].pt()<<"\t"<<abs(getSIP3D(Electrons[i]))<<"\t"<<fabs(Electrons[i].gsfTrack()->dxy(vertex->position()))<<"\t"<<fabs(Electrons[i].gsfTrack()->dz(vertex->position()))<<"\t"<<Electrons[i].gsfTrack()->hitPattern().numberOfAllHits(reco::HitPattern::MISSING_INNER_HITS)<<std::endl;
+//std::cout<<"Pt cut = "<<elecPtCut<<std::endl;
+
     if(Electrons[i].pt() > elecPtCut){
+//	std::cout<<"OK pt "<<std::endl;
         if( abs(getSIP3D(Electrons[i])) < sip3dCut) {
+//		std::cout<<"ok SIP"<<std::endl;
             if (fabs(Electrons[i].gsfTrack()->dxy(vertex->position())) < dxyCut) {
+//std::cout<<"ok dxy"<<std::endl;
                 if (fabs(Electrons[i].gsfTrack()->dz(vertex->position())) < dzCut ) {                  
+//std::cout<<"ok dz"<<std::endl;
                     int misHits = Electrons[i].gsfTrack()->hitPattern().numberOfAllHits(reco::HitPattern::MISSING_INNER_HITS); // for miniAOD
-                    if (misHits < missingHitsCuts) { bestElectrons.push_back(Electrons[i]);} //else {std::cout<<"el with pt "<<Electrons[i].pt()<<" failed misHitsCut "<<misHits <<std::endl;}
-                }  //else {std::cout<<"el with pt "<<Electrons[i].pt()<<" failed dzCut "<<fabs(Electrons[i].gsfTrack()->dz(vertex->position())) <<std::endl;}
-            } //else {std::cout<<"el with pt "<<Electrons[i].pt()<<" failed dxyCut "<<fabs(Electrons[i].gsfTrack()->dxy(vertex->position())) <<std::endl;}
-        } //else {std::cout<<"el with pt "<<Electrons[i].pt()<<" failed sip3dcut "<<abs(getSIP3D(Electrons[i]))<<std::endl;}
+                    if (misHits < missingHitsCuts) { 
+//std::cout<<"OK best"<<std::endl;
+bestElectrons.push_back(Electrons[i]);
+}
+//		else {std::cout<<"el with pt "<<Electrons[i].pt()<<" failed misHitsCut "<<misHits <<std::endl;}
+                }  
+//		else {std::cout<<"el with pt "<<Electrons[i].pt()<<" failed dzCut "<<fabs(Electrons[i].gsfTrack()->dz(vertex->position())) <<std::endl;}
+            }
+//		else {std::cout<<"el with pt "<<Electrons[i].pt()<<" failed dxyCut "<<fabs(Electrons[i].gsfTrack()->dxy(vertex->position())) <<std::endl;}
+        }
+//		else {std::cout<<"el with pt "<<Electrons[i].pt()<<" failed sip3dcut "<<abs(getSIP3D(Electrons[i]))<<std::endl;}
     }
+//                else {std::cout<<"el with pt "<<Electrons[i].pt()<<" failed pt cut"<<std::endl;}
 }  
 
 //std::cout<<bestElectrons.size()<<std::endl;
+//std::cout<<"SIZE best = "<<bestElectrons.size()<<std::endl;
 
     return bestElectrons;
 }
@@ -730,6 +761,7 @@ bool HZZ4LHelper::passTight_BDT_Id(pat::Electron electron, int year) {
     float cutVal=1000;
     float mvaVal=-1;
     float fSCeta = fabs(electron.superCluster()->eta());
+//std::cout<<"\t"<<electron.pt()<<"\t"<<electron.energy()<<std::endl;
     if(year==2018)
     {
         if(electron.pt()<=10){
@@ -772,6 +804,9 @@ bool HZZ4LHelper::passTight_BDT_Id(pat::Electron electron, int year) {
         }
         mvaVal = electron.userFloat("ElectronMVAEstimatorRun2Summer16ULIdIsoValues");
     }
+
+//	std::cout<<mvaVal<<"\t"<<cutVal<<std::endl;
+
     if( mvaVal > cutVal ) { return true;}
     //if (mvavalue > cutVal ) { return true;}
     return false;
