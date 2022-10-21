@@ -20,7 +20,7 @@
 <use   name="PhysicsTools/UtilAlgos"/>
 <use   name="PhysicsTools/Utilities"/>
 <use   name="SimDataFormats/PileupSummaryInfo"/>
-<use   name="SimDataFormats/GeneratorProducts">
+<use   name="SimDataFormats/GeneratorProducts"/>
 <use   name="EgammaAnalysis/ElectronTools"/> 
 <use   name="RecoEgamma/EgammaTools"/>
 <use   name="RecoParticleFlow/PFClusterTools"/>
@@ -38,7 +38,6 @@
 <use   name="RecoEcal/EgammaCoreTools"/>
 <use   name="PhysicsTools/SelectorUtils"/>
 <use   name="MagneticField/Records"/>
-<use   name="JHUGenMELA/MELA"/>
 <use   name="KinZfitter/KinZfitter"/>
 <use   name="CondFormats/JetMETObjects"/>
 <use   name="JetMETCorrections/Objects"/>
@@ -51,5 +50,7 @@
 <use   name="JetMETCorrections/Modules"/>
 <use   name="CondFormats/BTauObjects"/>
 <use   name="CondTools/BTau"/>
+<flags CPPFLAGS="-I$(MELA_LIB_PATH)/../../interface/" />
+<flags CXXFLAGS="-g -O3"/>
+<flags LDFLAGS="-L$(MELA_LIB_PATH) -lmcfm_707 -ljhugenmela -lcollier -lJHUGenMELAMELA" />
 <flags EDM_PLUGIN="1"/>
-<Flags CXXFLAGS="-g"/>

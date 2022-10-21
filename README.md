@@ -1,5 +1,31 @@
-HZZ Analyzer for CMS Run2
+# HZZ Analyzer for CMS Run2 for CMSSW_12_4_3
 
+
+SCRAM_ARCH=slc7_amd64_gcc900; export SCRAM_ARCH
+cmsrel CMSSW_12_4_3
+cd CMSSW_12_4_3/src/
+cmsenv
+git cms-init
+git clone https://github.com/JHUGen/JHUGenMELA
+cd JHUGenMELA/MELA/
+./setup.sh -j 8
+eval $(./setup.sh env) # remember to do this at every login
+cd ../../
+git clone -b UL20_10_6_26 https://ferrico@github.com/ferrico/UFHZZAnalysisRun2.git
+git clone -b UL20_10_6_26  https://github.com/ferrico/KinZfitter.git
+
+scramv1 b -j 8
+
+
+# ####### side note #######
+# 1) Muon, electron and jets corrections have been disabled
+# 2) electronID needs to be updated
+# ####### side note #######
+
+
+
+
+##### OLD STUFF #####
 ------
 
 To install:

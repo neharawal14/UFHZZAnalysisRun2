@@ -19,8 +19,6 @@
 #include <iomanip>
 #include <set>
 
-#define PI 3.14159
-
 // user include files 
 #include "TROOT.h"
 #include "TH1.h"
@@ -147,7 +145,7 @@
 #include "UFHZZAnalysisRun2/UFHZZ4LAna/interface/EwkCorrections.h"
 
 // JEC related
-#include "PhysicsTools/PatAlgos/plugins/PATJetUpdater.h"
+//#include "PhysicsTools/PatAlgos/plugins/PATJetUpdater.h"
 #include "JetMETCorrections/JetCorrector/interface/JetCorrector.h"
  
 //JER related
@@ -169,7 +167,8 @@
 #include "TrackingTools/Records/interface/TransientTrackRecord.h"
 #include "TrackingTools/TransientTrack/interface/TransientTrack.h"
 // Rochester Corrections
-#include "UFHZZAnalysisRun2/KalmanMuonCalibrationsProducer/src/RoccoR.cc"
+//#include "UFHZZAnalysisRun2/KalmanMuonCalibrationsProducer/interface/RoccoR.h"
+//#include "UFHZZAnalysisRun2/KalmanMuonCalibrationsProducer/src/RoccoR.cc"
 
 #include "RecoVertex/KalmanVertexFit/interface/SingleTrackVertexConstraint.h"
 
@@ -199,7 +198,7 @@ private:
     void findHiggsCandidate(std::vector< pat::Muon > &selectedMuons, std::vector< pat::Electron > &selectedElectrons, const edm::Event& iEvent, const edm::EventSetup& iSetup);
     void findZ1LCandidate(const edm::Event& iEvent);
     
-   	RoccoR  *calibrator;
+//   	RoccoR  *calibrator;
 	float ApplyRoccoR(int Y, bool isMC, int charge, float pt, float eta, float phi, float genPt, float nLayers);
 
     //Helper Class
@@ -636,6 +635,7 @@ private:
     vector<pat::Muon> recoMuons; vector<pat::Electron> recoElectrons; vector<pat::Electron> recoElectronsUnS; 
     vector<pat::Tau> recoTaus; vector<pat::Photon> recoPhotons;
     vector<pat::PFParticle> fsrPhotons; 
+//    vector<pat::Photon> fsrPhotons;
     TLorentzVector HVec, HVecNoFSR, Z1Vec, Z2Vec;
     TLorentzVector GENZ1Vec, GENZ2Vec;
     bool RecoFourMuEvent, RecoFourEEvent, RecoTwoETwoMuEvent, RecoTwoMuTwoEEvent;
@@ -670,6 +670,7 @@ private:
     edm::EDGetTokenT<std::vector<PileupSummaryInfo> > pileupSrc_;
     edm::EDGetTokenT<pat::PackedCandidateCollection> pfCandsSrc_;
     edm::EDGetTokenT<edm::View<pat::PFParticle> > fsrPhotonsSrc_;
+//    edm::EDGetTokenT<edm::View<pat::Photon> > fsrPhotonsSrc_;
     edm::EDGetTokenT<reco::GenParticleCollection> prunedgenParticlesSrc_;
     edm::EDGetTokenT<edm::View<pat::PackedGenParticle> > packedgenParticlesSrc_;
     edm::EDGetTokenT<edm::View<reco::GenJet> > genJetsSrc_;
@@ -679,7 +680,6 @@ private:
     edm::EDGetTokenT<HTXS::HiggsClassification> htxsSrc_;
     //edm::EDGetTokenT<HZZFid::FiducialSummary> fidRivetSrc_;
     edm::EDGetTokenT< double > prefweight_token_;
-
     // Configuration
     const float Zmass;
     float mZ1Low, mZ2Low, mZ1High, mZ2High, m4lLowCut;
@@ -712,6 +712,14 @@ private:
 
     int year;///use to choose Muon BDT
     bool isCode4l;
+
+edm::ESGetToken<JetCorrectorParametersCollection, JetCorrectionsRecord> mPayloadToken;
+const edm::ESGetToken<TransientTrackBuilder, TransientTrackRecord> ttbToken_;
+
+JME::JetResolution::Token AK4PFchs_ptToken_;
+JME::JetResolution::Token AK4PFchs_phiToken_;
+JME::JetResolutionScaleFactor::Token AK4PFchs_Token_;
+
 
     // register to the TFileService
     edm::Service<TFileService> fs;
@@ -757,6 +765,7 @@ UFHZZ4LAna::UFHZZ4LAna(const edm::ParameterSet& iConfig) :
     pileupSrc_(consumes<std::vector<PileupSummaryInfo> >(iConfig.getUntrackedParameter<edm::InputTag>("pileupSrc"))),
     pfCandsSrc_(consumes<pat::PackedCandidateCollection>(iConfig.getUntrackedParameter<edm::InputTag>("pfCandsSrc"))),
     fsrPhotonsSrc_(consumes<edm::View<pat::PFParticle> >(iConfig.getUntrackedParameter<edm::InputTag>("fsrPhotonsSrc"))),
+//    fsrPhotonsSrc_(consumes<edm::View<pat::Photon> >(iConfig.getUntrackedParameter<edm::InputTag>("fsrPhotonsSrc"))),
     prunedgenParticlesSrc_(consumes<reco::GenParticleCollection>(iConfig.getUntrackedParameter<edm::InputTag>("prunedgenParticlesSrc"))),
     packedgenParticlesSrc_(consumes<edm::View<pat::PackedGenParticle> >(iConfig.getUntrackedParameter<edm::InputTag>("packedgenParticlesSrc"))),
     genJetsSrc_(consumes<edm::View<reco::GenJet> >(iConfig.getUntrackedParameter<edm::InputTag>("genJetsSrc"))),
@@ -764,7 +773,7 @@ UFHZZ4LAna::UFHZZ4LAna(const edm::ParameterSet& iConfig) :
     lheInfoSrc_(consumes<LHEEventProduct>(iConfig.getUntrackedParameter<edm::InputTag>("lheInfoSrc"))),
     lheRunInfoToken_(consumes<LHERunInfoProduct,edm::InRun>(edm::InputTag("externalLHEProducer",""))),
     htxsSrc_(consumes<HTXS::HiggsClassification>(edm::InputTag("rivetProducerHTXS","HiggsClassification"))),
-    prefweight_token_(consumes< double >(edm::InputTag("prefiringweight:nonPrefiringProb"))),
+//    prefweight_token_(consumes< double >(edm::InputTag("prefiringweight:nonPrefiringProb"))),
     //fidRivetSrc_(consumes<HZZFid::FiducialSummary>(edm::InputTag("rivetProducerHZZFid","FiducialSummary"))),
     Zmass(91.1876),
     mZ1Low(iConfig.getUntrackedParameter<double>("mZ1Low",40.0)),
@@ -821,8 +830,13 @@ UFHZZ4LAna::UFHZZ4LAna(const edm::ParameterSet& iConfig) :
     // 2017
     // 2018
     // to select correct training
-    isCode4l(iConfig.getUntrackedParameter<bool>("isCode4l",true))    
-
+    isCode4l(iConfig.getUntrackedParameter<bool>("isCode4l",true)),
+mPayloadToken    {esConsumes(edm::ESInputTag("", iConfig.getParameter<std::string>("payload")))},
+ttbToken_	{esConsumes(edm::ESInputTag("", "TransientTrackBuilder"))}
+//	AK4PFchs_ptToken_(esConsumes(edm::ESInputTag("","AK4PFchs_pt"))),
+ //       AK4PFchs_phiToken_(esConsumes(edm::ESInputTag("","AK4PFchs_phi"))), 
+  //      AK4PFchs_Token_(esConsumes(edm::ESInputTag("","AK4PFchs"))) 
+ 
 {
   
     if(!isMC){reweightForPU = false;}
@@ -855,7 +869,7 @@ UFHZZ4LAna::UFHZZ4LAna(const edm::ParameterSet& iConfig) :
     tableEwk = readFile_and_loadEwkTable("ZZBG");   
 
     kinZfitter = new KinZfitter(!isMC, year);
-    kinZfitter_singleBS = new KinZfitter(!isMC, year);
+//    kinZfitter_singleBS = new KinZfitter(!isMC, year);
     kinZfitter_vtx = new KinZfitter(!isMC, year);
     kinZfitter_vtx_BS = new KinZfitter(!isMC, year);
 
@@ -919,10 +933,11 @@ UFHZZ4LAna::UFHZZ4LAna(const edm::ParameterSet& iConfig) :
 
     //BTag calibration
 //     string csv_name_161718[4] = {"DeepCSV_2016LegacySF_V1.csv", "DeepCSV_2016LegacySF_V1.csv", "DeepCSV_106XUL17SF_V2p1.csv", "DeepCSV_106XUL18SF.csv"};
-    string csv_name_161718[4] = {"DeepCSV_106XUL16preVFPSF_v1_hzz.csv", "DeepCSV_106XUL16postVFPSF_v2_hzz.csv", "wp_deepCSV_106XUL17_v3_hzz.csv", "wp_deepCSV_106XUL18_v2_hzz.csv"};
-    edm::FileInPath btagfileInPath(("UFHZZAnalysisRun2/UFHZZ4LAna/data/"+csv_name_161718[YEAR]).c_str());
+    const std::string csv_name_161718[4] = {"DeepCSV_106XUL16preVFPSF_v1_hzz.csv", "DeepCSV_106XUL16postVFPSF_v2_hzz.csv", "wp_deepCSV_106XUL17_v3_hzz.csv", "wp_deepCSV_106XUL18_v2_hzz.csv"};
+    const std::string btagfileInPath = "UFHZZAnalysisRun2/UFHZZ4LAna/data/" + csv_name_161718[YEAR];
+//    edm::FileInPath btagfileInPath(("UFHZZAnalysisRun2/UFHZZ4LAna/data/"+csv_name_161718[YEAR]).c_str());
 
-    BTagCalibration calib("DeepCSV", btagfileInPath.fullPath().c_str());
+    BTagCalibration calib("DeepCSV", btagfileInPath, false);//.fullPath());//.c_str()); --> "validate" argument set by hand as false
     reader = new BTagCalibrationReader(BTagEntry::OP_MEDIUM,  // operating point
                                        "central",             // central sys type
                                        {"up", "down"});      // other sys types
@@ -932,17 +947,18 @@ UFHZZ4LAna::UFHZZ4LAna(const edm::ParameterSet& iConfig) :
                 BTagEntry::FLAV_B,    // btag flavour
                 "comb");               // measurement type
 
-    if(year==2018)    {EleBDT_name_161718 = "ElectronMVAEstimatorRun2Summer18ULIdIsoValues"; BTagCut=0.4184; heepID_name_161718 = "heepElectronID-HEEPV70";}
+//    if(year==2018)    {EleBDT_name_161718 = "ElectronMVAEstimatorRun2Summer18ULIdIsoValues"; BTagCut=0.4184; heepID_name_161718 = "heepElectronID-HEEPV70";}
+    if(year==2018)    {EleBDT_name_161718 = "ElectronMVAEstimatorRun2Fall17IsoV1Values"; BTagCut=0.4184; heepID_name_161718 = "heepElectronID-HEEPV70";}
     if(year==2017)    {EleBDT_name_161718 = "ElectronMVAEstimatorRun2Summer17ULIdIsoValues"; BTagCut=0.4941; heepID_name_161718 = "heepElectronID-HEEPV70";}
     if(year==20165 || year==20160)    {EleBDT_name_161718 = "ElectronMVAEstimatorRun2Summer16ULIdIsoValues"; BTagCut=0.6321; heepID_name_161718 = "heepElectronID-HEEPV70";}
 
 
-	std::string DATAPATH = std::getenv( "CMSSW_BASE" );
-	if(year == 2018)    DATAPATH+="/src/UFHZZAnalysisRun2/KalmanMuonCalibrationsProducer/data/roccor.Run2.v5/RoccoR2018UL.txt";
-	if(year == 2017)    DATAPATH+="/src/UFHZZAnalysisRun2/KalmanMuonCalibrationsProducer/data/roccor.Run2.v5/RoccoR2017UL.txt";
-	if(year == 20165)    DATAPATH+="/src/UFHZZAnalysisRun2/KalmanMuonCalibrationsProducer/data/roccor.Run2.v5/RoccoR2016bUL.txt"; // for post VFP
-	if(year == 20160)    DATAPATH+="/src/UFHZZAnalysisRun2/KalmanMuonCalibrationsProducer/data/roccor.Run2.v5/RoccoR2016aUL.txt"; // for pre VFP
-	calibrator = new RoccoR(DATAPATH);
+//	std::string DATAPATH = std::getenv( "CMSSW_BASE" );
+//	if(year == 2018)    DATAPATH+="/src/UFHZZAnalysisRun2/KalmanMuonCalibrationsProducer/data/roccor.Run2.v5/RoccoR2018UL.txt";
+//	if(year == 2017)    DATAPATH+="/src/UFHZZAnalysisRun2/KalmanMuonCalibrationsProducer/data/roccor.Run2.v5/RoccoR2017UL.txt";
+//	if(year == 20165)    DATAPATH+="/src/UFHZZAnalysisRun2/KalmanMuonCalibrationsProducer/data/roccor.Run2.v5/RoccoR2016bUL.txt"; // for post VFP
+//	if(year == 20160)    DATAPATH+="/src/UFHZZAnalysisRun2/KalmanMuonCalibrationsProducer/data/roccor.Run2.v5/RoccoR2016aUL.txt"; // for pre VFP
+//	calibrator = new RoccoR(DATAPATH);
 
 }
 
@@ -959,22 +975,22 @@ UFHZZ4LAna::~UFHZZ4LAna()
 float UFHZZ4LAna::ApplyRoccoR(int Y, bool isMC, int charge, float pt, float eta, float phi, float genPt, float nLayers){
 
 
-	float scale_factor;
-	if(isMC && nLayers > 5)
-	{
-		if(genPt > 0)
-			scale_factor = calibrator->kSpreadMC(charge, pt, eta, phi, genPt);
-		else{
-			   TRandom3 rand;                                                                                                                                                                                                             
-			   rand.SetSeed(abs(static_cast<int>(sin(phi)*100000)));                                                                                          
-
-			   double u1;
-			   u1 = rand.Uniform(1.);
-			   scale_factor = calibrator->kSmearMC(charge, pt, eta, phi, nLayers, u1);
-		}
-	}
-	else
-		scale_factor = calibrator->kScaleDT(charge, pt, eta, phi);
+	float scale_factor = 1;
+//	if(isMC && nLayers > 5)
+//	{
+//		if(genPt > 0)
+//			scale_factor = calibrator->kSpreadMC(charge, pt, eta, phi, genPt);
+//		else{
+//			   TRandom3 rand;                                                                                                                                                                                                             
+//			   rand.SetSeed(abs(static_cast<int>(sin(phi)*100000)));                                                                                          
+//
+//			   double u1;
+//			   u1 = rand.Uniform(1.);
+//			   scale_factor = calibrator->kSmearMC(charge, pt, eta, phi, nLayers, u1);
+//		}
+//	}
+//	else
+//		scale_factor = calibrator->kScaleDT(charge, pt, eta, phi);
 
 	return scale_factor;
 
@@ -1098,6 +1114,7 @@ UFHZZ4LAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     iEvent.getByToken(pfCandsSrc_,pfCands);
 
     // FSR Photons
+//    edm::Handle<edm::View<pat::Photon> > photonsForFsr;
     edm::Handle<edm::View<pat::PFParticle> > photonsForFsr;
     iEvent.getByToken(fsrPhotonsSrc_,photonsForFsr);
   
@@ -1106,15 +1123,20 @@ UFHZZ4LAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     iEvent.getByToken(jetSrc_,jets);
 
     if (!jecunc) {
-        edm::ESHandle<JetCorrectorParametersCollection> jetCorrParameterSet;
-        iSetup.get<JetCorrectionsRecord>().get("AK4PFchs", jetCorrParameterSet);
-        const JetCorrectorParameters& jetCorrParameters = (*jetCorrParameterSet)["Uncertainty"];
-        jecunc.reset(new JetCorrectionUncertainty(jetCorrParameters));
+//        edm::ESHandle<JetCorrectorParametersCollection> jetCorrParameterSet;
+//        iSetup.get<JetCorrectionsRecord>().get("AK4PFchs", jetCorrParameterSet);
+//        const JetCorrectorParameters& jetCorrParameters = (*jetCorrParameterSet)["Uncertainty"];
+	auto const& jetCorrParameterSet = iSetup.getData(mPayloadToken);//"AK4PFchs");
+	std::vector<JetCorrectorParametersCollection::key_type> keys;
+	jetCorrParameterSet.validKeys(keys);
+        JetCorrectorParameters jetCorrParameters = (jetCorrParameterSet)["Uncertainty"];
+ 
+       jecunc.reset(new JetCorrectionUncertainty(jetCorrParameters));
     }
 
-    resolution_pt = JME::JetResolution::get(iSetup, "AK4PFchs_pt");
-    resolution_phi = JME::JetResolution::get(iSetup, "AK4PFchs_phi");
-    resolution_sf = JME::JetResolutionScaleFactor::get(iSetup, "AK4PFchs");
+//    resolution_pt = JME::JetResolution::get(iSetup, AK4PFchs_ptToken_);//"AK4PFchs_pt");
+//    resolution_phi = JME::JetResolution::get(iSetup, AK4PFchs_phiToken_);//"AK4PFchs_phi");
+//    resolution_sf = JME::JetResolutionScaleFactor::get(iSetup, AK4PFchs_Token_);//"AK4PFchs");
 
     edm::Handle<edm::ValueMap<float> > qgHandle;
     iEvent.getByToken(qgTagSrc_, qgHandle);
@@ -1177,17 +1199,17 @@ UFHZZ4LAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     */
 
 
-    if (isMC) {    
-        edm::Handle< double > theprefweight;
-            iEvent.getByToken(prefweight_token_, theprefweight ) ;
+//    if (isMC) {    
+//        edm::Handle< double > theprefweight;
+//            iEvent.getByToken(prefweight_token_, theprefweight ) ;
 //            std::cout<<(*theprefweight)<<std::endl;
 
 //            if (year == 20165 || year == 20160 || year == 2017)
-                prefiringWeight =(*theprefweight);
+//                prefiringWeight =(*theprefweight);
 //            else if (year == 2018)
 //                prefiringWeight =1.0;
-    }
-    else
+//    }
+//    else
         prefiringWeight =1.0;
     
     // ============ Initialize Variables ============= //
@@ -1781,6 +1803,7 @@ UFHZZ4LAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     bool passedOnlySingle=((passedSingleEl && !passedAnyOther) || (passedSingleMu && !passedSingleEl && !passedAnyOther));
 //     bool trigConditionData = ( passedTrig && (!checkOnlySingle || (checkOnlySingle && passedOnlySingle)) );
     bool trigConditionData = true;
+	if(verbose && passedOnlySingle) std::cout<<""<<std::endl;
         
     if (verbose) cout<<"checking PV"<<endl;       
     const reco::Vertex *PV = 0;
@@ -1876,8 +1899,10 @@ UFHZZ4LAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         if (verbose) cout<<"start pt-sorting leptons"<<endl;
         if (verbose) cout<<"adding muons to sorted list"<<endl;
 
-	    edm::ESHandle<TransientTrackBuilder> ttkb_recoLepton; 
-		iSetup.get<TransientTrackRecord>().get("TransientTrackBuilder", ttkb_recoLepton);
+//	    edm::ESHandle<TransientTrackBuilder> ttkb_recoLepton; 
+//		iSetup.get<TransientTrackRecord>().get("TransientTrackBuilder", ttkb_recoLepton);
+edm::ESHandle<TransientTrackBuilder> ttkb_recoLepton = iSetup.getHandle(ttbToken_);
+
 
 // if(iEvent.id().event() > 709310){
 // 	std::cout<<"PIPPO\tdopo TransientTrackBuilder\n";
@@ -1971,10 +1996,10 @@ UFHZZ4LAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 					lep_pt_genFromReco.push_back(-999);
 // 				    lep_pt_UnS.push_back(recoElectronsUnS[lep_ptindex[i]].pt());
 // 				    lep_pterrold_UnS.push_back(recoElectronsUnS[lep_ptindex[i]].p4Error(reco::GsfElectron::P4_COMBINATION));
-                     lep_errPre_Scale.push_back(recoElectrons[lep_ptindex[i]].userFloat("ecalTrkEnergyPreCorr"));
-                     lep_errPost_Scale.push_back(recoElectrons[lep_ptindex[i]].userFloat("ecalTrkEnergyPostCorr"));
-                     lep_errPre_noScale.push_back(recoElectronsUnS[lep_ptindex[i]].userFloat("ecalTrkEnergyPreCorr"));
-                     lep_errPost_noScale.push_back(recoElectronsUnS[lep_ptindex[i]].userFloat("ecalTrkEnergyPostCorr"));
+	 //                     lep_errPre_Scale.push_back(recoElectrons[lep_ptindex[i]].userFloat("ecalTrkEnergyPreCorr"));
+	 //                    lep_errPost_Scale.push_back(recoElectrons[lep_ptindex[i]].userFloat("ecalTrkEnergyPostCorr"));
+	 //                    lep_errPre_noScale.push_back(recoElectronsUnS[lep_ptindex[i]].userFloat("ecalTrkEnergyPreCorr"));
+	 //                    lep_errPost_noScale.push_back(recoElectronsUnS[lep_ptindex[i]].userFloat("ecalTrkEnergyPostCorr"));
 
                     double perr = 0.0;
                     if (recoElectrons[lep_ptindex[i]].ecalDriven()) {
@@ -2030,8 +2055,8 @@ UFHZZ4LAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                         lep_isoPUcorr.push_back(helper.getPUIso03(recoElectrons[lep_ptindex[i]],elRho));
                     }
                     lep_MiniIso.push_back(helper.miniIsolation(pfCands, dynamic_cast<const reco::Candidate *>(&recoElectrons[lep_ptindex[i]]), 0.05, 0.2, 10., rhoSUS, false));
-                    lep_Sip.push_back(helper.getSIP3D(recoElectrons[lep_ptindex[i]]));           
-                    //lep_mva.push_back(recoElectrons[lep_ptindex[i]].userFloat("ElectronMVAEstimatorRun2Autumn18IdIsoValues")); 
+                    //lep_Sip.push_back(helper.getSIP3D(recoElectrons[lep_ptindex[i]]));           
+//                    lep_mva.push_back(recoElectrons[lep_ptindex[i]].userFloat("ElectronMVAEstimatorRun2Autumn18IdIsoValues")); 
                     //cout<<EleBDT_name_161718<<endl;
                     lep_mva.push_back(recoElectrons[lep_ptindex[i]].userFloat(EleBDT_name_161718.c_str())); 
                     lep_ecalDriven.push_back(recoElectrons[lep_ptindex[i]].ecalDriven()); 
@@ -2065,17 +2090,17 @@ auto gen_lep = recoMuons[lep_ptindex[i]].genParticle();
 //else
 //	std::cout<<"GEN == 0\t"<<recoMuons[lep_ptindex[i]].pt()<<std::endl;
 
-               	    SingleTrackVertexConstraint stvc;
-					SingleTrackVertexConstraint::BTFtuple a = stvc.constrain(ttkb_recoLepton->build(recoMuons[lep_ptindex[i]].muonBestTrack()), BS);
-					reco::Track single_trk_BS = a.get<1>().track();					
-					TLorentzVector tmp;
-					tmp.SetPxPyPzE(single_trk_BS.px(), single_trk_BS.py(), single_trk_BS.pz(), KalmanEnergy(single_trk_BS.px(), single_trk_BS.py(), single_trk_BS.pz(), recoMuons[lep_ptindex[i]].mass()));
-					singleBS_RecoLep_pt.push_back(tmp.Pt());
-					singleBS_RecoLep_ptError.push_back(single_trk_BS.ptError());			
-					singleBS_RecoLep_eta.push_back(tmp.Eta());
-					singleBS_RecoLep_phi.push_back(tmp.Phi());			
-					singleBS_RecoLep_d0.push_back(single_trk_BS.dxy(BS.position()));
-				    singleBS_RecoLep_mass.push_back(recoMuons[lep_ptindex[i]].mass());
+//               	    SingleTrackVertexConstraint stvc;
+//					SingleTrackVertexConstraint::BTFtuple a = stvc.constrain(ttkb_recoLepton->build(recoMuons[lep_ptindex[i]].muonBestTrack()), BS);
+//					reco::Track single_trk_BS = a.get<1>().track();					
+//					TLorentzVector tmp;
+//					tmp.SetPxPyPzE(single_trk_BS.px(), single_trk_BS.py(), single_trk_BS.pz(), KalmanEnergy(single_trk_BS.px(), single_trk_BS.py(), single_trk_BS.pz(), recoMuons[lep_ptindex[i]].mass()));
+//					singleBS_RecoLep_pt.push_back(tmp.Pt());
+//					singleBS_RecoLep_ptError.push_back(single_trk_BS.ptError());			
+//					singleBS_RecoLep_eta.push_back(tmp.Eta());
+//					singleBS_RecoLep_phi.push_back(tmp.Phi());			
+//					singleBS_RecoLep_d0.push_back(single_trk_BS.dxy(BS.position()));
+//				    singleBS_RecoLep_mass.push_back(recoMuons[lep_ptindex[i]].mass());
 /*
 				    vtxRecoLep_BS_mass.push_back(vtxRecoLep_BS.at(i).M());
 				    vtxRecoLep_BS_d0.push_back(track_vtx.dxy(BS.position()));
@@ -2346,8 +2371,11 @@ auto gen_lep = recoMuons[lep_ptindex[i]].genParticle();
                     thisLep.SetPtEtaPhiM(lep_pt[i],lep_eta[i],lep_phi[i],lep_mass[i]);
 
                     double minDrOEt2 = 999.0; double selectedPhotonIso=9999.0; double selectedPhotonDr=9999.0;
-                    bool selected=false; pat::PFParticle selectedPhoton; 
+                    bool selected=false; 
+//pat::Photon selectedPhoton; 
+			pat::PFParticle selectedPhoton; 
                     for(edm::View<pat::PFParticle>::const_iterator phot=photonsForFsr->begin(); phot!=photonsForFsr->end(); ++phot) {
+//                    for(edm::View<pat::Photon>::const_iterator phot=photonsForFsr->begin(); phot!=photonsForFsr->end(); ++phot) {
 
                         // preselection
                         if (fabs(phot->eta()) > 2.4) continue;
@@ -2385,7 +2413,7 @@ auto gen_lep = recoMuons[lep_ptindex[i]].genParticle();
                         if (!closest) continue;
 
                         // comput iso, dR/ET^2
-                        double photoniso = helper.photonPfIso03(*phot,pfCands)/phot->pt();
+                        double photoniso = 1;//helper.photonPfIso03(*phot,pfCands)/phot->pt();
                         double fsrDrOEt2 = fsrDr/(phot->pt()*phot->pt());
 
                         // fill all fsr photons before iso, dR/Et^2 cuts
@@ -2740,8 +2768,8 @@ auto gen_lep = recoMuons[lep_ptindex[i]].genParticle();
                     kinZfitter->Setup(selectedLeptons, selectedFsrMap, year);
                     mass4lErr = (float)kinZfitter->GetM4lErr();
 
-                    kinZfitter_singleBS->Setup(singleBS_Lep, singleBS_Lep_ptError, selectedLeptons, selectedFsrMap, year);
-                    mass4lErr_singleBS = (float)kinZfitter_singleBS->GetM4lErr();
+//                    kinZfitter_singleBS->Setup(singleBS_Lep, singleBS_Lep_ptError, selectedLeptons, selectedFsrMap, year);
+//                    mass4lErr_singleBS = (float)kinZfitter_singleBS->GetM4lErr();
 
                     kinZfitter_vtx_BS->Setup(vtxLep_BS, vtxLep_BS_ptError, selectedLeptons, selectedFsrMap, year);
                     mass4lErr_vtx_BS = (float)kinZfitter_vtx_BS->GetM4lErr();
@@ -2757,11 +2785,11 @@ auto gen_lep = recoMuons[lep_ptindex[i]].genParticle();
                         massZ2REFIT = (float)kinZfitter->GetRefitMZ2(); 
 
                         //// single BS
-                        kinZfitter_singleBS->KinRefitZ();
-                        mass4lREFIT_singleBS = (float)kinZfitter_singleBS->GetRefitM4l();
-                        mass4lErrREFIT_singleBS = (float)kinZfitter_singleBS->GetRefitM4lErrFullCov();
-                        massZ1REFIT_singleBS = (float)kinZfitter_singleBS->GetRefitMZ1(); 
-                        massZ2REFIT_singleBS = (float)kinZfitter_singleBS->GetRefitMZ2(); 
+ //                       kinZfitter_singleBS->KinRefitZ();
+//                        mass4lREFIT_singleBS = (float)kinZfitter_singleBS->GetRefitM4l();
+//                        mass4lErrREFIT_singleBS = (float)kinZfitter_singleBS->GetRefitM4lErrFullCov();
+//                        massZ1REFIT_singleBS = (float)kinZfitter_singleBS->GetRefitMZ1(); 
+//                        massZ2REFIT_singleBS = (float)kinZfitter_singleBS->GetRefitMZ2(); 
 
                         //// vtx contraint at BS
                         kinZfitter_vtx_BS->KinRefitZ();
@@ -4193,12 +4221,12 @@ if (lep_tightId[i1] && lep_tightId[i2]
 			ttv.push_back(ttkb->build(recoMuons[lep_ptindex[lep_Hindex[2]]].muonBestTrack()));            
 			ttv.push_back(ttkb->build(recoMuons[lep_ptindex[lep_Hindex[3]]].muonBestTrack())); 
 						
-			for(int i = 0; i < 4; i++){
-				mass.push_back(recoMuons[lep_ptindex[lep_Hindex[i]]].mass());     
-				SingleTrackVertexConstraint::BTFtuple a = stvc.constrain(ttkb->build(recoMuons[lep_ptindex[lep_Hindex[i]]].muonBestTrack()), BS);
-				reco::Track singleBS_trk = a.get<1>().track();				
-				ttv_single.push_back(singleBS_trk);
-			}
+//			for(int i = 0; i < 4; i++){
+//				mass.push_back(recoMuons[lep_ptindex[lep_Hindex[i]]].mass());     
+//				SingleTrackVertexConstraint::BTFtuple a = stvc.constrain(ttkb->build(recoMuons[lep_ptindex[lep_Hindex[i]]].muonBestTrack()), BS);
+//				reco::Track singleBS_trk = a.get<1>().track();				
+//				ttv_single.push_back(singleBS_trk);
+//			}
 
         }
         else if ( abs(lep_id[lep_Hindex[0]])==13 && abs(lep_id[lep_Hindex[2]])==11 ) {
@@ -4218,11 +4246,11 @@ if (lep_tightId[i1] && lep_tightId[i2]
 			mass.push_back(recoElectrons[lep_ptindex[lep_Hindex[2]]].mass());     
 			mass.push_back(recoElectrons[lep_ptindex[lep_Hindex[3]]].mass()); 
 			
-			for(int i = 0; i < 2; i++){
-				SingleTrackVertexConstraint::BTFtuple a = stvc.constrain(ttkb->build(recoMuons[lep_ptindex[lep_Hindex[i]]].muonBestTrack()), BS);
-				reco::Track singleBS_trk = a.get<1>().track();				
-				ttv_single.push_back(singleBS_trk);
-			}
+//			for(int i = 0; i < 2; i++){
+//				SingleTrackVertexConstraint::BTFtuple a = stvc.constrain(ttkb->build(recoMuons[lep_ptindex[lep_Hindex[i]]].muonBestTrack()), BS);
+//				reco::Track singleBS_trk = a.get<1>().track();				
+//				ttv_single.push_back(singleBS_trk);
+//			}
     
         }
         else if ( abs(lep_id[lep_Hindex[0]])==11 && abs(lep_id[lep_Hindex[2]])==13 ) {
@@ -4242,11 +4270,11 @@ if (lep_tightId[i1] && lep_tightId[i2]
 			mass.push_back(recoMuons[lep_ptindex[lep_Hindex[2]]].mass());     
 			mass.push_back(recoMuons[lep_ptindex[lep_Hindex[3]]].mass());     
  
- 			for(int i = 2; i < 4; i++){
-				SingleTrackVertexConstraint::BTFtuple a = stvc.constrain(ttkb->build(recoMuons[lep_ptindex[lep_Hindex[i]]].muonBestTrack()), BS);
-				reco::Track singleBS_trk = a.get<1>().track();				
-				ttv_single.push_back(singleBS_trk);
-			}
+// 			for(int i = 2; i < 4; i++){
+//				SingleTrackVertexConstraint::BTFtuple a = stvc.constrain(ttkb->build(recoMuons[lep_ptindex[lep_Hindex[i]]].muonBestTrack()), BS);
+//				reco::Track singleBS_trk = a.get<1>().track();				
+//				ttv_single.push_back(singleBS_trk);
+//			}
        }
         else if ( abs(lep_id[lep_Hindex[0]])==11 && abs(lep_id[lep_Hindex[2]])==11 ) {
             RecoFourEEvent = true;
@@ -4263,7 +4291,7 @@ if (lep_tightId[i1] && lep_tightId[i2]
 			for(int i = 0; i < 4; i++)
 				mass.push_back(recoElectrons[lep_ptindex[lep_Hindex[i]]].mass());     
         }
-
+/*
 		TLorentzVector tmp;
 		if(RecoTwoMuTwoEEvent){			
 			for(int i = 0; i < 2; i++){
@@ -4317,7 +4345,7 @@ if (lep_tightId[i1] && lep_tightId[i2]
 				singleBS_Lep_d0.push_back(singleBS_trk.dxy(BS.position()));
 			}		    
 		}
-
+*/
 		KalmanVertexFitter KVfitter(true);
 		TransientVertex KVertex_BS = KVfitter.vertex(ttv, BS);
 	    
@@ -4334,8 +4362,8 @@ if (lep_tightId[i1] && lep_tightId[i2]
 				tmp.SetPxPyPzE(track_vtx_BS.px(), track_vtx_BS.py(), track_vtx_BS.pz(), KalmanEnergy(track_vtx_BS.px(), track_vtx_BS.py(), track_vtx_BS.pz(), selectedMuons.at(0).mass()));
 			    vtxLep_BS.push_back(tmp);
 			    vtxLep_BS_pt_NoRoch.push_back(vtxLep_BS.at(0).Pt());
-			    float nl = lep_trackerLayersWithMeasurement[lep_Hindex[0]];
-				float scaleFactor = ApplyRoccoR(year, isMC, selectedMuons.at(0).charge(), vtxLep_BS.at(0).Pt(), vtxLep_BS.at(0).Eta(), vtxLep_BS.at(0).Phi(), lep_pt_genFromReco[lep_Hindex[0]], nl);
+//			    float nl = lep_trackerLayersWithMeasurement[lep_Hindex[0]];
+				float scaleFactor = 1;//ApplyRoccoR(year, isMC, selectedMuons.at(0).charge(), vtxLep_BS.at(0).Pt(), vtxLep_BS.at(0).Eta(), vtxLep_BS.at(0).Phi(), lep_pt_genFromReco[lep_Hindex[0]], nl);
 				float ciao = vtxLep_BS.at(0).Pt() * scaleFactor;
 				vtxLep_BS.at(0).SetPtEtaPhiM(ciao, vtxLep_BS.at(0).Eta(), vtxLep_BS.at(0).Phi(), vtxLep_BS.at(0).M());
 				vtxLep_BS_ptError.push_back(track_vtx_BS.ptError());
@@ -4347,8 +4375,8 @@ if (lep_tightId[i1] && lep_tightId[i2]
 				tmp.SetPxPyPzE(track_vtx_BS.px(), track_vtx_BS.py(), track_vtx_BS.pz(), KalmanEnergy(track_vtx_BS.px(), track_vtx_BS.py(), track_vtx_BS.pz(), selectedMuons.at(1).mass()));
 			    vtxLep_BS.push_back(tmp);
 			    vtxLep_BS_pt_NoRoch.push_back(vtxLep_BS.at(1).Pt());
-			    nl = lep_trackerLayersWithMeasurement[lep_Hindex[1]];
-				scaleFactor = ApplyRoccoR(year, isMC, selectedMuons.at(1).charge(), vtxLep_BS.at(1).Pt(), vtxLep_BS.at(1).Eta(), vtxLep_BS.at(1).Phi(), lep_pt_genFromReco[lep_Hindex[1]], nl);
+//			    nl = lep_trackerLayersWithMeasurement[lep_Hindex[1]];
+				scaleFactor = 1;//ApplyRoccoR(year, isMC, selectedMuons.at(1).charge(), vtxLep_BS.at(1).Pt(), vtxLep_BS.at(1).Eta(), vtxLep_BS.at(1).Phi(), lep_pt_genFromReco[lep_Hindex[1]], nl);
 				ciao = vtxLep_BS.at(1).Pt() * scaleFactor;
 				vtxLep_BS.at(1).SetPtEtaPhiM(ciao, vtxLep_BS.at(1).Eta(), vtxLep_BS.at(1).Phi(), vtxLep_BS.at(1).M());
 				vtxLep_BS_ptError.push_back(track_vtx_BS.ptError());
@@ -4410,8 +4438,8 @@ if (lep_tightId[i1] && lep_tightId[i2]
 				tmp.SetPxPyPzE(track_vtx_BS.px(), track_vtx_BS.py(), track_vtx_BS.pz(), KalmanEnergy(track_vtx_BS.px(), track_vtx_BS.py(), track_vtx_BS.pz(), selectedMuons.at(0).mass()));
 			    vtxLep_BS.push_back(tmp);
 			    vtxLep_BS_pt_NoRoch.push_back(vtxLep_BS.at(2).Pt());
-			    float nl = lep_trackerLayersWithMeasurement[lep_Hindex[2]];
-				float scaleFactor = ApplyRoccoR(year, isMC, selectedMuons.at(0).charge(), vtxLep_BS.at(2).Pt(), vtxLep_BS.at(2).Eta(), vtxLep_BS.at(2).Phi(), lep_pt_genFromReco[lep_Hindex[2]], nl);
+//			    float nl = lep_trackerLayersWithMeasurement[lep_Hindex[2]];
+				float scaleFactor = 1;//ApplyRoccoR(year, isMC, selectedMuons.at(0).charge(), vtxLep_BS.at(2).Pt(), vtxLep_BS.at(2).Eta(), vtxLep_BS.at(2).Phi(), lep_pt_genFromReco[lep_Hindex[2]], nl);
 				float ciao = vtxLep_BS.at(2).Pt() * scaleFactor;
 				vtxLep_BS.at(2).SetPtEtaPhiM(ciao, vtxLep_BS.at(2).Eta(), vtxLep_BS.at(2).Phi(), vtxLep_BS.at(2).M());
 				vtxLep_BS_ptError.push_back(track_vtx_BS.ptError());
@@ -4423,8 +4451,8 @@ if (lep_tightId[i1] && lep_tightId[i2]
 				tmp.SetPxPyPzE(track_vtx_BS.px(), track_vtx_BS.py(), track_vtx_BS.pz(), KalmanEnergy(track_vtx_BS.px(), track_vtx_BS.py(), track_vtx_BS.pz(), selectedMuons.at(1).mass()));
 			    vtxLep_BS.push_back(tmp);
 			    vtxLep_BS_pt_NoRoch.push_back(vtxLep_BS.at(3).Pt());
-			    nl = lep_trackerLayersWithMeasurement[lep_Hindex[3]];
-				scaleFactor = ApplyRoccoR(year, isMC, selectedMuons.at(1).charge(), vtxLep_BS.at(3).Pt(), vtxLep_BS.at(3).Eta(), vtxLep_BS.at(3).Phi(), lep_pt_genFromReco[lep_Hindex[3]], nl);
+//			    nl = lep_trackerLayersWithMeasurement[lep_Hindex[3]];
+				scaleFactor = 1;//ApplyRoccoR(year, isMC, selectedMuons.at(1).charge(), vtxLep_BS.at(3).Pt(), vtxLep_BS.at(3).Eta(), vtxLep_BS.at(3).Phi(), lep_pt_genFromReco[lep_Hindex[3]], nl);
 				ciao = vtxLep_BS.at(3).Pt() * scaleFactor;
 				vtxLep_BS.at(3).SetPtEtaPhiM(ciao, vtxLep_BS.at(3).Eta(), vtxLep_BS.at(3).Phi(), vtxLep_BS.at(3).M());
 				vtxLep_BS_ptError.push_back(track_vtx_BS.ptError());
@@ -4468,8 +4496,8 @@ if (lep_tightId[i1] && lep_tightId[i2]
 // 				std::cout<<"4mu"<<std::endl;
 				for(int i = 0; i < 4; i++){
 					TLorentzVector tmp;
-					reco::Track singleBS_trk = ttv_single.at(i);
-					tmp.SetPxPyPzE(singleBS_trk.px(), singleBS_trk.py(), singleBS_trk.pz(), KalmanEnergy(singleBS_trk.px(), singleBS_trk.py(), singleBS_trk.pz(), selectedMuons.at(i).mass()));
+//					reco::Track singleBS_trk = ttv_single.at(i);
+//					tmp.SetPxPyPzE(singleBS_trk.px(), singleBS_trk.py(), singleBS_trk.pz(), KalmanEnergy(singleBS_trk.px(), singleBS_trk.py(), singleBS_trk.pz(), selectedMuons.at(i).mass()));
 
 					reco::Track track_vtx_BS = ttrks_BS.at(i).track();
 					tmp.SetPxPyPzE(track_vtx_BS.px(), track_vtx_BS.py(), track_vtx_BS.pz(), KalmanEnergy(track_vtx_BS.px(), track_vtx_BS.py(), track_vtx_BS.pz(), mass.at(i)));
@@ -4477,8 +4505,8 @@ if (lep_tightId[i1] && lep_tightId[i2]
 					vtxLep_BS_d0.push_back(track_vtx_BS.dxy(BS.position()));
 				    vtxLep_BS.push_back(tmp);
 					vtxLep_BS_pt_NoRoch.push_back(vtxLep_BS.at(i).Pt());
-					float nl = lep_trackerLayersWithMeasurement[lep_Hindex[i]];
-					float scaleFactor = ApplyRoccoR(year, isMC, selectedMuons.at(i).charge(), vtxLep_BS.at(i).Pt(), vtxLep_BS.at(i).Eta(), vtxLep_BS.at(i).Phi(), lep_pt_genFromReco[lep_Hindex[i]], nl);
+//					float nl = lep_trackerLayersWithMeasurement[lep_Hindex[i]];
+					float scaleFactor = 1;//ApplyRoccoR(year, isMC, selectedMuons.at(i).charge(), vtxLep_BS.at(i).Pt(), vtxLep_BS.at(i).Eta(), vtxLep_BS.at(i).Phi(), lep_pt_genFromReco[lep_Hindex[i]], nl);
 					float ciao = vtxLep_BS.at(i).Pt() * scaleFactor;
 					vtxLep_BS.at(i).SetPtEtaPhiM(ciao, vtxLep_BS.at(i).Eta(), vtxLep_BS.at(i).Phi(), vtxLep_BS.at(i).M());
 					dataMC_VxBS.push_back(helper.dataMC(ciao, vtxLep_BS.at(i).Eta(), hMuScaleFac));
@@ -4592,8 +4620,8 @@ if (lep_tightId[i1] && lep_tightId[i2]
 			else{
 				for(int i = 0; i < 4; i++){
 					TLorentzVector tmp;
-					reco::Track singleBS_trk = ttv_single.at(i);
-					tmp.SetPxPyPzE(singleBS_trk.px(), singleBS_trk.py(), singleBS_trk.pz(), KalmanEnergy(singleBS_trk.px(), singleBS_trk.py(), singleBS_trk.pz(), selectedMuons.at(i).mass()));
+//					reco::Track singleBS_trk = ttv_single.at(i);
+//					tmp.SetPxPyPzE(singleBS_trk.px(), singleBS_trk.py(), singleBS_trk.pz(), KalmanEnergy(singleBS_trk.px(), singleBS_trk.py(), singleBS_trk.pz(), selectedMuons.at(i).mass()));
 
 					reco::Track track_vtx_BS = ttrks.at(i).track();
 // 					tmp.SetPxPyPzE( KalmanRefMu(ttrk.at(i), mass.at(i)).at(3), KalmanRefMu(ttrk.at(i), mass.at(i)).at(4), KalmanRefMu(ttrk.at(i), mass.at(i)).at(5), KalmanRefMu(ttrk.at(i), mass.at(i)).at(6));
@@ -5560,16 +5588,16 @@ void UFHZZ4LAna::setTreeVariables( const edm::Event& iEvent, const edm::EventSet
         parameters.setJetPt(goodJets[k].pt());
         parameters.setJetEta(goodJets[k].eta());
         parameters.setRho(muRho);
-        float relpterr = resolution_pt.getResolution(parameters);
-        float phierr = resolution_phi.getResolution(parameters);
+        float relpterr = 1;//resolution_pt.getResolution(parameters);
+        float phierr = 1;//resolution_phi.getResolution(parameters);
         
         double jercorr = 1.0; double jercorrup = 1.0; double jercorrdn = 1.0;
         
         if (isMC && doJER) {
             JME::JetParameters sf_parameters = {{JME::Binning::JetPt, goodJets[k].pt()}, {JME::Binning::JetEta, goodJets[k].eta()}, {JME::Binning::Rho, muRho}};
-            float factor = resolution_sf.getScaleFactor(sf_parameters);
-            float factorup = resolution_sf.getScaleFactor(sf_parameters, Variation::UP);
-            float factordn = resolution_sf.getScaleFactor(sf_parameters, Variation::DOWN);
+            float factor = 1;//resolution_sf.getScaleFactor(sf_parameters);
+            float factorup = 1;//resolution_sf.getScaleFactor(sf_parameters, Variation::UP);
+            float factordn = 1;//resolution_sf.getScaleFactor(sf_parameters, Variation::DOWN);
             
             double pt_jer, pt_jerup, pt_jerdn;
             const reco::GenJet * genJet = goodJets[k].genJet();
@@ -5976,20 +6004,21 @@ void UFHZZ4LAna::setTreeVariables( const edm::Event& iEvent, const edm::EventSet
     	    TLorentzVector ph_tmp, lep_tmp, Lep_ph_tmp;
 
 			///// singleBS /////
-		    singleBS_Lep_pt.push_back(singleBS_Lep.at(i).Pt());
-		    singleBS_Lep_eta.push_back(singleBS_Lep.at(i).Eta());
-		    singleBS_Lep_phi.push_back(singleBS_Lep.at(i).Phi());
-		    singleBS_Lep_mass.push_back(singleBS_Lep.at(i).M());
+//		    singleBS_Lep_pt.push_back(singleBS_Lep.at(i).Pt());
+//		    singleBS_Lep_eta.push_back(singleBS_Lep.at(i).Eta());
+//		    singleBS_Lep_phi.push_back(singleBS_Lep.at(i).Phi());
+//		    singleBS_Lep_mass.push_back(singleBS_Lep.at(i).M());
 // 			std::cout<<"singleBS = "<<singleBS_Lep.at(i).Eta()<<"\t"<<singleBS_Lep.at(i).Phi()<<"\t"<<singleBS_Lep.at(i).Pt()<<"\t"<<singleBS_Lep.at(i).M()<<std::endl;
-            H_singleBS += singleBS_Lep.at(i); // without FSR    	    
+//            H_singleBS += singleBS_Lep.at(i); // without FSR    	    
     	    
-    	    lep_tmp.SetPtEtaPhiM(singleBS_Lep.at(i).Pt(), singleBS_Lep.at(i).Eta(), singleBS_Lep.at(i).Phi(), singleBS_Lep.at(i).M());
+//    	    lep_tmp.SetPtEtaPhiM(singleBS_Lep.at(i).Pt(), singleBS_Lep.at(i).Eta(), singleBS_Lep.at(i).Phi(), singleBS_Lep.at(i).M());
     	    for(uint ph = 0; ph < selectedFsrMap.size(); ph++){
     	    	if(selectedFsrMap[ph].Pt() != 0 && i == ph){
     	    	    index = ph;
     	    	    continue;
     	    	}
     	    }
+/*
     	    if(index != 999){
    	    	    Lep_ph_tmp = selectedFsrMap[index] + lep_tmp;    
    	    	    singleBS_FSR_Lep_pt.push_back(Lep_ph_tmp.Pt());
@@ -6008,7 +6037,7 @@ void UFHZZ4LAna::setTreeVariables( const edm::Event& iEvent, const edm::EventSet
    	    	 }
 
 			H_singleBS_FSR += Lep_ph_tmp; // with FSR
-			
+*/			
 			
 			///// VX /////
 		    vtxLep_pt.push_back(vtxLep.at(i).Pt());
@@ -6120,10 +6149,10 @@ void UFHZZ4LAna::setTreeVariables( const edm::Event& iEvent, const edm::EventSet
 			H_VtxFSR_BS += Lep_ph_tmp; // with FSR
 
     	}
-   	    mass4l_singleBS = H_singleBS.M(); // without FSR
+//   	    mass4l_singleBS = H_singleBS.M(); // without FSR
    	    mass4l_vtx = H_Vtx.M(); // without FSR
    	    mass4l_vtx_BS = H_Vtx_BS.M(); // without FSR
-   	    mass4l_singleBS_FSR = H_singleBS_FSR.M(); 
+//   	    mass4l_singleBS_FSR = H_singleBS_FSR.M(); 
    	    mass4l_vtxFSR = H_VtxFSR.M(); 
    	    mass4l_vtxFSR_BS = H_VtxFSR_BS.M();   
    	    

@@ -58,7 +58,8 @@
 #include "CommonTools/Utils/interface/StringCutObjectSelector.h"
 #include "DataFormats/VertexReco/interface/Vertex.h"
 #include "RecoVertex/VertexTools/interface/VertexDistance3D.h"
-#include "RecoEgamma/EgammaTools/interface/ConversionTools.h"
+//#include "RecoEgamma/EgammaTools/interface/ConversionTools.h"
+#include "CommonTools/Egamma/interface/ConversionTools.h"
 
 // PAT
 #include "DataFormats/PatCandidates/interface/Electron.h"
@@ -473,7 +474,7 @@ if(ScaleAndSmearing){
 //std::cout<<"Before = 2  "<<Electrons[i].pt()<<"\t"<<Electrons[i].eta()<<"\t"<<Electrons[i].phi()<<"\t"<<Electrons[i].mass()<<std::endl;
 	float old_pt = Electrons[i].pt();
 	
-	auto corrP4  = Electrons[i].p4() * Electrons[i].userFloat("ecalTrkEnergyPostCorr") / Electrons[i].energy();
+	auto corrP4  = Electrons[i].p4();// * Electrons[i].userFloat("ecalTrkEnergyPostCorr") / Electrons[i].energy();
 	Electrons[i].setP4(corrP4);
 
 //std::cout<<"After = "<<Electrons[i].pt()<<"\t"<<Electrons[i].eta()<<"\t"<<Electrons[i].phi()<<"\t"<<Electrons[i].mass()<<std::endl;
@@ -774,7 +775,8 @@ bool HZZ4LHelper::passTight_BDT_Id(pat::Electron electron, int year) {
             if(fSCeta >= 0.8 && fSCeta < 1.479) cutVal = 0.0759172100;
             if(fSCeta >= 1.479) cutVal = -0.5169136775;
         }
-        mvaVal = electron.userFloat("ElectronMVAEstimatorRun2Summer18ULIdIsoValues");
+//        mvaVal = electron.userFloat("ElectronMVAEstimatorRun2Summer18ULIdIsoValues");
+        mvaVal = electron.userFloat("ElectronMVAEstimatorRun2Fall17IsoV1Values");
     }
     if(year==2017)
     {
@@ -866,7 +868,8 @@ bool HZZ4LHelper::passTight_Id_SUS(pat::Electron electron, std::string elecID, c
             if(fSCeta >= 0.8 && fSCeta < 1.479) cutVal = 0.0759172100;
             if(fSCeta >= 1.479) cutVal = -0.5169136775;
         }
-        mvaVal = electron.userFloat("ElectronMVAEstimatorRun2Summer18ULIdIsoValues");
+//        mvaVal = electron.userFloat("ElectronMVAEstimatorRun2Summer18ULIdIsoValues");
+        mvaVal = electron.userFloat("ElectronMVAEstimatorRun2Fall17IsoV1Values");
     }
     if(year==2017)
     {

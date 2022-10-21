@@ -35,7 +35,7 @@
 //#include "UserCode/llvv_fwk/interface/LumiUtils.h"
 //#include "UserCode/llvv_fwk/interface/SmartSelectionMonitor.h"
 //
-#include "RecoEgamma/ElectronIdentification/interface/VersionedPatElectronSelector.h"
+//#include "RecoEgamma/ElectronIdentification/interface/VersionedPatElectronSelector.h"
 //
 #include <vector>
 #include "TVector3.h"
