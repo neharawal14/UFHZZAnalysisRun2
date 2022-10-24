@@ -2,16 +2,27 @@
 
 
 SCRAM_ARCH=slc7_amd64_gcc900; export SCRAM_ARCH
+
 cmsrel CMSSW_12_4_3
+
 cd CMSSW_12_4_3/src/
+
 cmsenv
+
 git cms-init
+
 git clone https://github.com/JHUGen/JHUGenMELA
+
 cd JHUGenMELA/MELA/
+
 ./setup.sh -j 8
+
 eval $(./setup.sh env) # remember to do this at every login
+
 cd ../../
+
 git clone -b UL20_10_6_26 https://ferrico@github.com/ferrico/UFHZZAnalysisRun2.git
+
 git clone -b UL20_10_6_26  https://github.com/ferrico/KinZfitter.git
 
 scramv1 b -j 8
