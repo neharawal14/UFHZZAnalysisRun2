@@ -21,7 +21,7 @@ eval $(./setup.sh env) # remember to do this at every login
 
 cd ../../
 
-git clone -b UL20_10_6_26 https://ferrico@github.com/ferrico/UFHZZAnalysisRun2.git
+git clone -b 12_4_3 https://ferrico@github.com/ferrico/UFHZZAnalysisRun2.git
 
 git clone -b UL20_10_6_26  https://github.com/ferrico/KinZfitter.git
 
