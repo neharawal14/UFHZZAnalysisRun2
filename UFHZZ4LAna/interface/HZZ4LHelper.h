@@ -97,7 +97,7 @@ public:
 
     std::vector<pat::Electron> goodElectrons2015_noIso_noBdt(std::vector<pat::Electron> Electrons, double elecPtCut, std::string elecID, const reco::Vertex *&vertex,const edm::Event& iEvent, double sip3dCut, bool ScaleAndSmearing); 
     std::vector<pat::Muon> goodMuons2015_noIso_noPf(std::vector<pat::Muon> Muons, double muPtCut, const reco::Vertex *&vertex, double sip3dCut);
-    std::vector<pat::Tau> goodTaus2015(std::vector<pat::Tau> Taus, double tauPtCut);
+    std::vector<pat::Tau> goodTaus2015(std::vector<pat::Tau> Taus, double tauPtCut, bool isMC);
     std::vector<pat::Photon> goodPhotons2015(std::vector<pat::Photon> Photons, double phoPtCut, int year);
 
     void cleanOverlappingLeptons(std::vector<pat::Muon> &Muons, std::vector<pat::Electron> &Electrons,const reco::Vertex *&vertex);
@@ -366,8 +366,7 @@ std::vector<pat::Electron> HZZ4LHelper::goodLooseElectrons2012(edm::Handle<edm::
     for(edm::View<pat::Electron>::const_iterator elec_=ElectronsUnS->begin(); elec_!=ElectronsUnS->end(); ++elec_) {
         if(Ele_passLoose[i]) {
             bestElectrons.push_back(*elec_);
-//		                std::cout<<"Loose passed UnS = "<<elec_->pt()<<std::endl;
- 
+//		                std::cout<<"Loose passed UnS = "<<elec_->pt()<<std::endl; 
        }
         i++;
     }
@@ -429,8 +428,9 @@ std::vector<pat::Muon> HZZ4LHelper::goodMuons2015_noIso_noPf(std::vector<pat::Mu
     for(unsigned int i = 0; i < Muons.size(); i++) {
         //std::cout<<"pt: "<<Muons[i].pt()<<std::endl;
         if( Muons[i].pt() > muPtCut && abs(Muons[i].eta()) < muEtaCut &&
-            (Muons[i].isGlobalMuon() || (Muons[i].isTrackerMuon() && Muons[i].numberOfMatches() > 0 ) ) &&
-            Muons[i].muonBestTrackType() != 2 ) {
+            (Muons[i].isGlobalMuon() || (Muons[i].isTrackerMuon() && Muons[i].numberOfMatchedStations() > 0 ) ) 
+//		&& Muons[i].muonBestTrackType() != 2 
+		) {
             //std::cout<<"test1 "<<std::endl;
             if( abs(getSIP3D(Muons[i])) < sip3dCut ) {
                 //std::cout<<"test2 "<<std::endl;
@@ -515,8 +515,8 @@ else{
                     int misHits = Electrons[i].gsfTrack()->hitPattern().numberOfAllHits(reco::HitPattern::MISSING_INNER_HITS); // for miniAOD
                     if (misHits < missingHitsCuts) { 
 //std::cout<<"OK best"<<std::endl;
-bestElectrons.push_back(Electrons[i]);
-}
+				bestElectrons.push_back(Electrons[i]);
+		    }
 //		else {std::cout<<"el with pt "<<Electrons[i].pt()<<" failed misHitsCut "<<misHits <<std::endl;}
                 }  
 //		else {std::cout<<"el with pt "<<Electrons[i].pt()<<" failed dzCut "<<fabs(Electrons[i].gsfTrack()->dz(vertex->position())) <<std::endl;}
@@ -534,7 +534,7 @@ bestElectrons.push_back(Electrons[i]);
     return bestElectrons;
 }
 
-std::vector<pat::Tau> HZZ4LHelper::goodTaus2015(std::vector<pat::Tau> Taus, double tauPtCut)
+std::vector<pat::Tau> HZZ4LHelper::goodTaus2015(std::vector<pat::Tau> Taus, double tauPtCut, bool isMC)
 {
     using namespace edm;
     using namespace pat;
@@ -545,7 +545,13 @@ std::vector<pat::Tau> HZZ4LHelper::goodTaus2015(std::vector<pat::Tau> Taus, doub
     for(unsigned int i = 0; i < Taus.size(); i++) {
 
         if ( Taus[i].pt()<tauPtCut ) continue;
-        if ( Taus[i].tauID("byLooseIsolationMVArun2v1DBnewDMwLT") < 0.5) continue;
+	if(isMC){
+//	        if ( Taus[i].tauID("byLooseIsolationMVArun2v1DBnewDMwLT") < 0.5) continue; //Run2
+		if ( Taus[i].tauID("byLooseCombinedIsolationDeltaBetaCorr3Hits") < 0.5) continue;
+	}
+	else{
+                if ( Taus[i].tauID("byCombinedIsolationDeltaBetaCorrRaw3Hits") < 0.5) continue;
+	}
         bestTaus.push_back(Taus[i]);
 
     }
@@ -683,14 +689,19 @@ void HZZ4LHelper::cleanOverlappingLeptons(std::vector<pat::Muon> &Muons, std::ve
     // changed above cuts by Ahmad
 
     for( unsigned int i = 0; i < Muons.size(); i++ ) {
+
+
         if( Muons[i].pt() > muPtCut && abs(Muons[i].eta()) < muEtaCut &&
 	    passTight_Id(Muons[i], vertex) &&
             //Muons[i].isPFMuon() == 1 &&
-            (Muons[i].isGlobalMuon() || (Muons[i].isTrackerMuon() && Muons[i].numberOfMatches(/*reco::Muon::SegmentArbitration*/) > 0 /*numberOfMatchedStations() > 0*/ ) ) &&
-            Muons[i].muonBestTrackType() != 2 ) {
+            (Muons[i].isGlobalMuon() || (Muons[i].isTrackerMuon() && Muons[i].numberOfMatchedStations(/*reco::Muon::SegmentArbitration*/) > 0 /*numberOfMatchedStations() > 0*/ ) ) 
+// && Muons[i].muonBestTrackType() != 2 
+		) {
             if( abs(getSIP3D(Muons[i])) < sip3dCut ) {	       
-                if( fabs(Muons[i].muonBestTrack()->dxy(vertex->position())) < dxyCut ) { //miniAOD                     
-                    if( fabs(Muons[i].muonBestTrack()->dz(vertex->position())) < dzCut ) {// miniAOD                        
+                if( fabs(Muons[i].dB(pat::Muon::PV2D)) < dxyCut ) { //miniAOD                     
+                    if( fabs(Muons[i].dB(pat::Muon::PVDZ)) < dzCut ) {// miniAOD  
+//                if( fabs(Muons[i].muonBestTrack()->dxy(vertex->position())) < dxyCut ) { //miniAOD                     
+//                    if( fabs(Muons[i].muonBestTrack()->dz(vertex->position())) < dzCut ) {// miniAOD                        
                         for( unsigned int j = 0; j < Electrons.size(); j++ ) {
                             tmpDeltR = deltaR(Muons[i].eta(),Muons[i].phi(),Electrons[j].eta(),Electrons[j].phi());
                             if( tmpDeltR < 0.05 ) {		
@@ -827,12 +838,13 @@ bool HZZ4LHelper::passTight_Id(pat::Muon muon, const reco::Vertex *&vertex) {
 }
 
 bool HZZ4LHelper::isTrackerHighPt(pat::Muon muon, const reco::Vertex *&vertex){
-    return ( muon.numberOfMatchedStations() > 1 
-              && (muon.muonBestTrack()->ptError()/muon.muonBestTrack()->pt()) < 0.3 
-              && std::abs(muon.muonBestTrack()->dxy(vertex->position())) < 0.2 
-              && std::abs(muon.muonBestTrack()->dz(vertex->position())) < 0.5 
-              && muon.innerTrack()->hitPattern().numberOfValidPixelHits() > 0 
-              && muon.innerTrack()->hitPattern().trackerLayersWithMeasurement() > 5 );
+//    return ( muon.numberOfMatchedStations() > 1 
+//              && (muon.muonBestTrack()->ptError()/muon.muonBestTrack()->pt()) < 0.3 
+//              && std::abs(muon.muonBestTrack()->dxy(vertex->position())) < 0.2 
+//              && std::abs(muon.muonBestTrack()->dz(vertex->position())) < 0.5 
+//              && muon.innerTrack()->hitPattern().numberOfValidPixelHits() > 0 
+//              && muon.innerTrack()->hitPattern().trackerLayersWithMeasurement() > 5 );
+	return (muon.passed(reco::Muon::CutBasedIdTrkHighPt));
 }
 
 bool HZZ4LHelper::passTight_Id_SUS(pat::Muon muon, const reco::Vertex *&vertex) {

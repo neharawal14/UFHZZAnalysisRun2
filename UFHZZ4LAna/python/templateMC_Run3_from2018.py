@@ -13,8 +13,9 @@ process.load("Configuration.Geometry.GeometryRecoDB_cff")
 				#process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 process.load('Configuration.StandardSequences.Services_cff')
-				#process.GlobalTag.globaltag='106X_upgrade2018_realistic_v16_L1v1'
-process.GlobalTag.globaltag='112X_dataRun2_v7'
+
+process.GlobalTag.globaltag='124X_mcRun3_2022_realistic_v12'
+#process.GlobalTag.globaltag='124X_mcRun3_2022_realistic_postEE_v1' ### EE campaign
 
 process.Timing = cms.Service("Timing",
                              summaryOnly = cms.untracked.bool(True)
@@ -28,19 +29,28 @@ process.options = cms.untracked.PSet(
 )
 
 myfilelist = cms.untracked.vstring(
-'/store/mc/Run3Winter22MiniAOD/DYJetsToLL_M-50_TuneCP5_13p6TeV-madgraphMLM-pythia8/MINIAODSIM/122X_mcRun3_2021_realistic_v9_ext2-v2/40000/003d71c2-23aa-40cb-877a-2e6b5ac9befc.root',
-#'/store/mc/RunIISummer20UL18MiniAODv2/GluGluToContinToZZTo4mu_TuneCP5_13TeV-mcfm701-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/250000/5DBC328A-D546-744C-BE4D-8DC24481017D.root',
+#'/store/mc/Run3Summer22MiniAODv3/GluGluHtoZZto4L_M-125_TuneCP5_13p6TeV_powheg2-JHUGenV752-pythia8/MINIAODSIM/124X_mcRun3_2022_realistic_v12-v2/2540000/23f46be3-335f-4035-b14b-7ab75999e545.root',
+#'/store/mc/Run3Summer22MiniAODv3/GluGluHtoZZto4L_M-125_TuneCP5_13p6TeV_powheg2-JHUGenV752-pythia8/MINIAODSIM/124X_mcRun3_2022_realistic_v12-v2/2540000/30bed6a1-2824-4ff0-b5aa-0cf814f1ef35.root',
+#'/store/mc/Run3Summer22MiniAODv3/GluGluHtoZZto4L_M-125_TuneCP5_13p6TeV_powheg2-JHUGenV752-pythia8/MINIAODSIM/124X_mcRun3_2022_realistic_v12-v2/2540000/8d330ddc-c291-4a95-9020-8c236974747c.root',
+#'/store/mc/Run3Summer22MiniAODv3/GluGluHtoZZto4L_M-125_TuneCP5_13p6TeV_powheg2-JHUGenV752-pythia8/MINIAODSIM/124X_mcRun3_2022_realistic_v12-v2/2540000/74a96797-d505-4a98-acf1-e972d0766efa.root',
+#'/store/mc/Run3Summer22MiniAODv3/GluGluHtoZZto4L_M-125_TuneCP5_13p6TeV_powheg2-JHUGenV752-pythia8/MINIAODSIM/124X_mcRun3_2022_realistic_v12-v2/2540000/dcc9aa61-5b1f-4d08-9a5c-5a90e26d7c09.root',
+#'/store/mc/Run3Summer22MiniAODv3/GluGluHtoZZto4L_M-125_TuneCP5_13p6TeV_powheg2-JHUGenV752-pythia8/MINIAODSIM/124X_mcRun3_2022_realistic_v12-v2/2540000/e76d9d0e-0521-4385-835a-c306ac5f6784.root',
+#'/store/mc/Run3Summer22MiniAODv3/GluGluHtoZZto4L_M-125_TuneCP5_13p6TeV_powheg2-JHUGenV752-pythia8/MINIAODSIM/124X_mcRun3_2022_realistic_v12-v2/2540000/ea8c3ae2-835b-4306-ad7c-68b4a18f3c68.root',
+#'/store/mc/Run3Summer22MiniAODv3/GluGluHtoZZto4L_M-125_TuneCP5_13p6TeV_powheg2-JHUGenV752-pythia8/MINIAODSIM/124X_mcRun3_2022_realistic_v12-v2/2540000/cfab3eab-1f20-4c8f-a809-88ea0ae5df51.root',
 
+'/store/mc/Run3Summer22MiniAODv3/VBFHto2Zto4L_M125_TuneCP5_13p6TeV_powheg-jhugenv752-pythia8/MINIAODSIM/124X_mcRun3_2022_realistic_v12-v2/60000/cc05e027-9d4a-49c7-92ea-13753827bda6.root',
+'/store/mc/Run3Summer22MiniAODv3/VBFHto2Zto4L_M125_TuneCP5_13p6TeV_powheg-jhugenv752-pythia8/MINIAODSIM/124X_mcRun3_2022_realistic_v12-v2/60000/c1cc8145-a9c2-44c5-98b9-053902057ff4.root',
+'/store/mc/Run3Summer22MiniAODv3/VBFHto2Zto4L_M125_TuneCP5_13p6TeV_powheg-jhugenv752-pythia8/MINIAODSIM/124X_mcRun3_2022_realistic_v12-v2/60000/11bd508a-d121-4541-84dd-0a12e0c44a5e.root',
 
 )
 
 process.source = cms.Source("PoolSource",fileNames = myfilelist,
            #                 duplicateCheckMode = cms.untracked.string('noDuplicateCheck'),
-           #eventsToProcess = cms.untracked.VEventRange('1:12:66017')
+#           eventsToProcess = cms.untracked.VEventRange('1:18:11952')
                             )
 
 process.TFileService = cms.Service("TFileService",
-                                   fileName = cms.string("DUMMYFILENAME_2018_L2_old.root")
+                                   fileName = cms.string("DUMMYFILENAME_ggH_125_ZZ_2.root")
 )
 
 # clean muons by segments 
@@ -334,9 +344,11 @@ process.Ana = cms.EDAnalyzer('UFHZZ4LAna',
                               #electronSrc  = cms.untracked.InputTag("electronsMVA"),
                               #electronUnSSrc  = cms.untracked.InputTag("electronsMVA"),
                               electronUnSSrc  = cms.untracked.InputTag("slimmedElectrons"),
+#			lowPtelectronUnSSrc = cms.untracked.InputTag("slimmedLowPtElectrons"),
  #        		      electronSrc  = cms.untracked.InputTag("calibratedPatElectrons"),
 			#                              muonSrc      = cms.untracked.InputTag("calibratedMuons"),
-                              muonSrc      = cms.untracked.InputTag("boostedMuons"),
+#                              muonSrc      = cms.untracked.InputTag("boostedMuons"),
+                              muonSrc      = cms.untracked.InputTag("slimmedMuons"),
                               tauSrc      = cms.untracked.InputTag("slimmedTaus"),
                               jetSrc       = cms.untracked.InputTag("slimmedJetsJEC"),
 #                              jetSrc       = cms.untracked.InputTag("slimmedJets"),
@@ -402,12 +414,12 @@ process.Ana = cms.EDAnalyzer('UFHZZ4LAna',
 #                                  'HLT_TripleMu_10_5_5_DZ_v',
 #                                  'HLT_TripleMu_12_10_5_v',
                               ),
-                              verbose = cms.untracked.bool(False),              
+                              verbose = cms.untracked.bool(False), 
                               skimLooseLeptons = cms.untracked.int32(2),              
                               skimTightLeptons = cms.untracked.int32(2),              
                               #bestCandMela = cms.untracked.bool(False),
                               year = cms.untracked.int32(2018),####for year put 2016,2017, or 2018 to select correct setting
-                              isCode4l = cms.untracked.bool(False), 
+                              isCode4l = cms.untracked.bool(True), 
 			      payload = cms.string("AK4PFchs"),
                              )
 

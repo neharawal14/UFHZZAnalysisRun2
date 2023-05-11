@@ -153,8 +153,8 @@ KalmanMuonCalibrationsProducer::produce(edm::Event& iEvent, const edm::EventSetu
 
        if (useRochester) {
 
-           if(mu.muonBestTrackType() == 1 && mu.pt()<200.0) {
-
+//           if(mu.muonBestTrackType() == 1 && mu.pt()<200.0) {
+	   if(mu.track().isNonnull()){
 
            int nl = mu.track()->hitPattern().trackerLayersWithMeasurement();
 

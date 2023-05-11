@@ -324,6 +324,12 @@ private:
     int nisoleptons;
     double muRho, elRho, rhoSUS;
 
+        vector<float> lep_pt_low;
+        vector<float> lep_eta_low;
+        vector<int> lep_id_low;
+        vector<float> lep_phi_low;
+        vector<float> lep_mass_low;
+
     // tau variables
     vector<int> tau_id;
     vector<double> tau_pt, tau_eta, tau_phi, tau_mass;
@@ -587,6 +593,14 @@ private:
 	vector<float> vtxRecoLep_pt_float; 	vector<float> vtxRecoLep_ptError_float; 	vector<float> vtxRecoLep_eta_float; 	vector<float> vtxRecoLep_phi_float; 	vector<float> vtxRecoLep_mass_float;
 
 
+        vector<float> lep_pt_low_float;
+        vector<float> lep_eta_low_float;
+        vector<int> lep_id_low_float;
+        vector<float> lep_phi_low_float;
+        vector<float> lep_mass_low_float;
+
+
+
 	vector<float> lep_pt_FromMuonBestTrack_float, lep_eta_FromMuonBestTrack_float, lep_phi_FromMuonBestTrack_float;
 	vector<float> lep_position_x_float, lep_position_y_float, lep_position_z_float;
 	vector<float> lep_pt_genFromReco_float;
@@ -632,7 +646,7 @@ private:
     // Global Variables but not stored in the tree
     vector<double> lep_ptreco;
     vector<int> lep_ptid; vector<int> lep_ptindex;
-    vector<pat::Muon> recoMuons; vector<pat::Electron> recoElectrons; vector<pat::Electron> recoElectronsUnS; 
+    vector<pat::Muon> recoMuons; vector<pat::Electron> recoElectrons; vector<pat::Electron> recoElectronsUnS; vector<pat::Electron> recoLowPtElectronsUnS; 
     vector<pat::Tau> recoTaus; vector<pat::Photon> recoPhotons;
     vector<pat::PFParticle> fsrPhotons; 
 //    vector<pat::Photon> fsrPhotons;
@@ -648,6 +662,7 @@ private:
     //Input edm
     edm::EDGetTokenT<edm::View<pat::Electron> > elecSrc_;
     edm::EDGetTokenT<edm::View<pat::Electron> > elecUnSSrc_;
+    edm::EDGetTokenT<edm::View<pat::Electron> > lowPtelecUnSSrc_;
     edm::EDGetTokenT<edm::View<pat::Muon> > muonSrc_;
     edm::EDGetTokenT<edm::View<pat::Tau> > tauSrc_;
     edm::EDGetTokenT<edm::View<pat::Photon> > photonSrc_;
@@ -744,6 +759,7 @@ UFHZZ4LAna::UFHZZ4LAna(const edm::ParameterSet& iConfig) :
     //elecSrc_(consumes<edm::View<pat::Electron> >(iConfig.getUntrackedParameter<edm::InputTag>("electronSrc"))),
     elecSrc_(consumes<edm::View<pat::Electron> >(iConfig.getUntrackedParameter<edm::InputTag>("electronUnSSrc"))),
     elecUnSSrc_(consumes<edm::View<pat::Electron> >(iConfig.getUntrackedParameter<edm::InputTag>("electronUnSSrc"))),
+//    lowPtelecUnSSrc_(consumes<edm::View<pat::Electron> >(iConfig.getUntrackedParameter<edm::InputTag>("lowPtelectronUnSSrc"))),
     muonSrc_(consumes<edm::View<pat::Muon> >(iConfig.getUntrackedParameter<edm::InputTag>("muonSrc"))),
     tauSrc_(consumes<edm::View<pat::Tau> >(iConfig.getUntrackedParameter<edm::InputTag>("tauSrc"))),
     photonSrc_(consumes<edm::View<pat::Photon> >(iConfig.getUntrackedParameter<edm::InputTag>("photonSrc"))),
@@ -932,20 +948,20 @@ ttbToken_	{esConsumes(edm::ESInputTag("", "TransientTrackBuilder"))}
     hudsgTagEffi = (TH2F*)fbTagEffi->Get("eff_udsg_M_ALL");
 
     //BTag calibration
-//     string csv_name_161718[4] = {"DeepCSV_2016LegacySF_V1.csv", "DeepCSV_2016LegacySF_V1.csv", "DeepCSV_106XUL17SF_V2p1.csv", "DeepCSV_106XUL18SF.csv"};
+//     string csv_name_161718[4] = {"DeepCSV_106XUL16preVFPSF_v1_hzz.csv", "DeepCSV_106XUL16postVFPSF_v2_hzz.csv", "wp_deepCSV_106XUL17_v3_hzz.csv", "wp_deepCSV_106XUL18_v2_hzz.csv"};
+//    edm::FileInPath btagfileInPath(("UFHZZAnalysisRun2/UFHZZ4LAna/data/"+csv_name_161718[YEAR]).c_str());
     const std::string csv_name_161718[4] = {"DeepCSV_106XUL16preVFPSF_v1_hzz.csv", "DeepCSV_106XUL16postVFPSF_v2_hzz.csv", "wp_deepCSV_106XUL17_v3_hzz.csv", "wp_deepCSV_106XUL18_v2_hzz.csv"};
     const std::string btagfileInPath = "UFHZZAnalysisRun2/UFHZZ4LAna/data/" + csv_name_161718[YEAR];
-//    edm::FileInPath btagfileInPath(("UFHZZAnalysisRun2/UFHZZ4LAna/data/"+csv_name_161718[YEAR]).c_str());
 
-    BTagCalibration calib("DeepCSV", btagfileInPath, false);//.fullPath());//.c_str()); --> "validate" argument set by hand as false
-    reader = new BTagCalibrationReader(BTagEntry::OP_MEDIUM,  // operating point
-                                       "central",             // central sys type
-                                       {"up", "down"});      // other sys types
+//     BTagCalibration calib("csv", btagfileInPath, false);//.fullPath());//.c_str()); --> "validate" argument set by hand as false
+//     reader = new BTagCalibrationReader(BTagEntry::OP_MEDIUM,  // operating point
+//                                        "central",             // central sys type
+//                                        {"up", "down"});      // other sys types
    
 
-    reader->load(calib,                // calibration instance
-                BTagEntry::FLAV_B,    // btag flavour
-                "comb");               // measurement type
+//     reader->load(calib,                // calibration instance
+//                 BTagEntry::FLAV_B,    // btag flavour
+//                 "comb");               // measurement type
 
 //    if(year==2018)    {EleBDT_name_161718 = "ElectronMVAEstimatorRun2Summer18ULIdIsoValues"; BTagCut=0.4184; heepID_name_161718 = "heepElectronID-HEEPV70";}
     if(year==2018)    {EleBDT_name_161718 = "ElectronMVAEstimatorRun2Fall17IsoV1Values"; BTagCut=0.4184; heepID_name_161718 = "heepElectronID-HEEPV70";}
@@ -1068,6 +1084,8 @@ UFHZZ4LAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     edm::Handle<edm::View<pat::Electron> > electronsUnS;
     iEvent.getByToken(elecUnSSrc_,electronsUnS);
 
+//    edm::Handle<edm::View<pat::Electron> > lowPtelectronsUnS;
+//    iEvent.getByToken(lowPtelecUnSSrc_,lowPtelectronsUnS);
     // muon collection
     edm::Handle<edm::View<pat::Muon> > muons;
     iEvent.getByToken(muonSrc_,muons);
@@ -1273,6 +1291,8 @@ UFHZZ4LAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     lep_missingHits.clear();
     lep_filtersMatched.clear();    
     nisoleptons=0;
+
+lep_pt_low.clear(); lep_eta_low.clear(); lep_phi_low.clear(); lep_id_low.clear(); lep_mass_low.clear();
     
 	vtxRecoLep_BS.clear();
 	vtxRecoLep.clear();
@@ -1548,7 +1568,7 @@ UFHZZ4LAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     // Global variables not stored in tree
     lep_ptreco.clear(); lep_ptid.clear(); lep_ptindex.clear();
-    recoMuons.clear(); recoElectrons.clear(); fsrPhotons.clear(); recoElectronsUnS.clear();
+    recoMuons.clear(); recoElectrons.clear(); fsrPhotons.clear(); recoElectronsUnS.clear(); recoLowPtElectronsUnS.clear();
     HVec.SetPtEtaPhiM(0.0,0.0,0.0,0.0);
     HVecNoFSR.SetPtEtaPhiM(0.0,0.0,0.0,0.0);
     Z1Vec.SetPtEtaPhiM(0.0,0.0,0.0,0.0);
@@ -1566,6 +1586,8 @@ UFHZZ4LAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 	lep_numberOfValidPixelHits_float.clear();
 	lep_trackerLayersWithMeasurement_float.clear();
+
+lep_pt_low_float.clear(); lep_eta_low_float.clear(); lep_phi_low_float.clear(); lep_id_low_float.clear(); lep_mass_low_float.clear();
 
 	singleBS_Lep_pt_float.clear(); 	
 	singleBS_Lep_ptError_float.clear(); 	
@@ -1873,10 +1895,12 @@ UFHZZ4LAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         if (verbose) cout<<"start lepton analysis"<<endl;           
         vector<pat::Electron> AllElectrons; vector<pat::Muon> AllMuons; 
         vector<pat::Electron> AllElectronsUnS;////uncorrected electron 
+        vector<pat::Electron> AllLowPtElectronsUnS;
         vector<pat::Tau> AllTaus; vector<pat::Photon> AllPhotons;
         //AllElectrons = helper.goodLooseElectrons2012(electrons,electronsUnS,_elecPtCut);
         AllElectrons = helper.goodLooseElectrons2012(electrons,_elecPtCut);
         AllElectronsUnS = helper.goodLooseElectrons2012(electrons,electronsUnS,_elecPtCut);
+//        AllLowPtElectronsUnS = helper.goodLooseElectrons2012(lowPtelectronsUnS,_elecPtCut);
         AllMuons = helper.goodLooseMuons2012(muons,_muPtCut);
         AllTaus = helper.goodLooseTaus2015(taus,_tauPtCut);
         AllPhotons = helper.goodLoosePhotons2015(photons,_phoPtCut);
@@ -1886,8 +1910,13 @@ UFHZZ4LAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         recoMuons = helper.goodMuons2015_noIso_noPf(AllMuons,_muPtCut,PV,sip3dCut);
         recoElectrons = helper.goodElectrons2015_noIso_noBdt(AllElectrons,_elecPtCut,elecID,PV,iEvent,sip3dCut, true);
         recoElectronsUnS = helper.goodElectrons2015_noIso_noBdt(AllElectronsUnS,_elecPtCut,elecID,PV,iEvent,sip3dCut, false);
+	recoLowPtElectronsUnS = helper.goodElectrons2015_noIso_noBdt(AllLowPtElectronsUnS,_elecPtCut,elecID,PV,iEvent,sip3dCut, false);
         helper.cleanOverlappingTaus(recoMuons,recoElectrons,AllTaus,isoCutMu,isoCutEl,muRho,elRho);
-        recoTaus = helper.goodTaus2015(AllTaus,_tauPtCut);
+
+        helper.cleanOverlappingTaus(recoMuons,recoLowPtElectronsUnS,AllTaus,isoCutMu,isoCutEl,muRho,elRho);
+
+
+        recoTaus = helper.goodTaus2015(AllTaus,_tauPtCut,isMC);
         recoPhotons = helper.goodPhotons2015(AllPhotons,_phoPtCut,year);
 // if(iEvent.id().event() > 709310){
 // 	std::cout<<"PIPPO\tdopo lepton skim\n";
@@ -1961,11 +1990,38 @@ edm::ESHandle<TransientTrackBuilder> ttkb_recoLepton = iSetup.getHandle(ttbToken
      
 // if(iEvent.id().event() > 709310)
 // 	std::cout<<"PIPPO\tlepton size"<<lep_ptreco.size()<<"\n";
+
+//if(recoLowPtElectronsUnS.size() > 0){
+//if(recoLowPtElectronsUnS.size() > 1){
+//for(unsigned int i  = 0; i < recoLowPtElectronsUnS.size(); i++){
+//lep_pt_low.push_back(recoLowPtElectronsUnS[lep_ptindex[i]].pt());
+//lep_eta_low.push_back(recoLowPtElectronsUnS[lep_ptindex[i]].eta());
+//lep_phi_low.push_back(recoLowPtElectronsUnS[lep_ptindex[i]].phi());
+//lep_id_low.push_back(recoLowPtElectronsUnS[lep_ptindex[i]].pdgId());
+//lep_mass_low.push_back(recoLowPtElectronsUnS[lep_ptindex[i]].mass());
+
+//std::cout<<"("<<i<<")Low = '"<<recoLowPtElectronsUnS[lep_ptindex[i]].pt()<<"\t"<<recoLowPtElectronsUnS[lep_ptindex[i]].eta()<<"\t"<<recoLowPtElectronsUnS[lep_ptindex[i]].phi()<<"\t"<<recoLowPtElectronsUnS[lep_ptindex[i]].pdgId()<<std::endl;
+
+//}
+//}
+//else{
+//lep_pt_low.push_back(-999);
+//lep_eta_low.push_back(-999);
+//lep_phi_low.push_back(-999);
+//lep_id_low.push_back(-999);
+//lep_mass_low.push_back(-999);
+//}
+//}
+
             for(unsigned int i = 0; i < lep_ptreco.size(); i++) {
                 
                 if (verbose) cout<<"sorted lepton "<<i<<" pt "<<lep_ptreco[i]<<" id "<<lep_ptid[i]<<" index "<<lep_ptindex[i]<<endl;
                 
                 if (abs(lep_ptid[i])==11) {
+
+
+
+//std::cout<<"("<<i<<")Bas = '"<<recoElectronsUnS[lep_ptindex[i]].pt()<<"\t"<<recoElectronsUnS[lep_ptindex[i]].eta()<<"\t"<<recoElectronsUnS[lep_ptindex[i]].phi()<<"\t"<<recoElectronsUnS[lep_ptindex[i]].pdgId()<<std::endl;
 
                 	if(n_lep_e < 2 && !isCode4l){
                 		if(helper.passTight_BDT_Id(recoElectronsUnS[lep_ptindex[i]],year)){
@@ -1975,8 +2031,22 @@ edm::ESHandle<TransientTrackBuilder> ttkb_recoLepton = iSetup.getHandle(ttbToken
            			    	}
                 		}
                 	}
-
-                    lep_d0BS.push_back(recoElectrons[lep_ptindex[i]].gsfTrack()->dxy(beamSpot->position()));
+/*
+if(recoLowPtElectronsUnS.size() > 0){
+lep_pt_low.push_back(recoLowPtElectronsUnS[lep_ptindex[i]].pt());
+lep_eta_low.push_back(recoLowPtElectronsUnS[lep_ptindex[i]].eta());
+lep_phi_low.push_back(recoLowPtElectronsUnS[lep_ptindex[i]].phi());
+lep_id_low.push_back(recoLowPtElectronsUnS[lep_ptindex[i]].pdgId());
+lep_mass_low.push_back(recoLowPtElectronsUnS[lep_ptindex[i]].mass());
+}
+else{
+lep_pt_low.push_back(-999);
+lep_eta_low.push_back(-999);
+lep_phi_low.push_back(-999);
+lep_id_low.push_back(-999);
+lep_mass_low.push_back(-999);
+}
+*/                    lep_d0BS.push_back(recoElectrons[lep_ptindex[i]].gsfTrack()->dxy(beamSpot->position()));
                     lep_d0PV.push_back(recoElectrons[lep_ptindex[i]].gsfTrack()->dxy(PV->position()));
 					lep_numberOfValidPixelHits.push_back(recoElectrons[lep_ptindex[i]].gsfTrack()->hitPattern().numberOfValidPixelHits());
 					lep_trackerLayersWithMeasurement.push_back(recoElectrons[lep_ptindex[i]].gsfTrack()->hitPattern().trackerLayersWithMeasurement());
@@ -2111,6 +2181,13 @@ auto gen_lep = recoMuons[lep_ptindex[i]].genParticle();
                		if(!isCode4l && !helper.passTight_BDT_Id(recoMuons[lep_ptindex[i]],vertex,muRho,year,PV)) continue;
                		if(!isCode4l && helper.getSIP3D(recoMuons[lep_ptindex[i]]) > 4) continue;
                 	if(!isCode4l && helper.pfIso03(recoMuons[lep_ptindex[i]],muRho) > 0.35) continue;
+*/
+/*
+lep_pt_low.push_back(-999);
+lep_eta_low.push_back(-999);
+lep_phi_low.push_back(-999);
+lep_id_low.push_back(-999);
+lep_mass_low.push_back(-999);
 */
                 	if(n_lep_mu < 2 && !isCode4l){
                 		if(helper.passTight_Id(recoMuons[lep_ptindex[i]],PV)){
@@ -2378,7 +2455,8 @@ auto gen_lep = recoMuons[lep_ptindex[i]].genParticle();
 //                    for(edm::View<pat::Photon>::const_iterator phot=photonsForFsr->begin(); phot!=photonsForFsr->end(); ++phot) {
 
                         // preselection
-                        if (fabs(phot->eta()) > 2.4) continue;
+                        if (fabs(phot->eta()) > 2.5) continue;
+			if (fabs(lep_id[i]) == 13 && fabs(phot->eta()) > 2.4) continue;
                         if (phot->pt()<2.0) continue;
                         double fsrDr = deltaR(thisLep.Eta(), thisLep.Phi(), phot->eta(), phot->phi());
                         if (fsrDr>0.5) continue;
@@ -2642,9 +2720,6 @@ auto gen_lep = recoMuons[lep_ptindex[i]].genParticle();
                 */
 
                 if(isCode4l && foundHiggsCandidate ){              
-//                 if(foundHiggsCandidate ){
-                
-                    
                     for(unsigned int i = 0; i<4;i++){
                         
                         int index = lep_Hindex[i];
@@ -2654,12 +2729,10 @@ auto gen_lep = recoMuons[lep_ptindex[i]].genParticle();
                         }
                     }
                     
-//                     for(uint i = 0; i < selectedFsrMap.size(); i++)
-//                     	std::cout<<"GOOD PHOTON = "<<selectedFsrMap[i].Pt()<<std::endl;
-                    
                     if (verbose) cout<<"storing H_p4_noFSR"<<endl; 
                     math::XYZTLorentzVector tmpHVec;
                     if (verbose) cout<<"selectedMuons "<<selectedMuons.size()<<" selectedElectrons "<<selectedElectrons.size()<<endl;
+
                     if(RecoFourMuEvent) {
                         tmpHVec = selectedMuons[0].p4() + selectedMuons[1].p4() + selectedMuons[2].p4() + selectedMuons[3].p4();
                         HVecNoFSR.SetPtEtaPhiM(tmpHVec.Pt(),tmpHVec.Eta(),tmpHVec.Phi(),tmpHVec.M());
@@ -2716,7 +2789,7 @@ auto gen_lep = recoMuons[lep_ptindex[i]].genParticle();
                         }
                         
                     }
-                    
+
                     H_noFSR_pt.push_back(HVecNoFSR.Pt());
                     H_noFSR_eta.push_back(HVecNoFSR.Eta());
                     H_noFSR_phi.push_back(HVecNoFSR.Phi());
@@ -2735,7 +2808,7 @@ auto gen_lep = recoMuons[lep_ptindex[i]].genParticle();
                         passedZ4lSelection = true;
                         if(Z2Vec.M() > mZ2Low && passedTrig) passedFullSelection = true;
                     }
-                    
+
                 } // found higgs candidate 
                 else { if (verbose) cout<<Run<<":"<<LumiSect<<":"<<Event<<" failed higgs candidate"<<endl;}
                  
@@ -2877,7 +2950,6 @@ auto gen_lep = recoMuons[lep_ptindex[i]].genParticle();
                     mela->setProcess(TVar::bkgZZ, TVar::JHUGen, TVar::ZZGG);
                     mela->computePM4l(TVar::SMSyst_None, bkg_m4l);
 
-                    
                     D_bkg_kin = me_0plus_JHU/(me_0plus_JHU+me_qqZZ_MCFM*helper.getDbkgkinConstant(idL1*idL2*idL3*idL3,mass4l)); 
                     D_bkg_kin_vtx_BS = me_0plus_JHU/(me_0plus_JHU+me_qqZZ_MCFM*helper.getDbkgkinConstant(idL1*idL2*idL3*idL3,mass4l_vtxFSR_BS)); 
 
@@ -3454,6 +3526,13 @@ auto gen_lep = recoMuons[lep_ptindex[i]].genParticle();
 // if(iEvent.id().event() > 709310)
 // 	std::cout<<"PIPPO\t before filling 10\n";				                                  
 
+lep_pt_low_float.assign(lep_pt_low.begin(), lep_pt_low.end());
+lep_eta_low_float.assign(lep_eta_low.begin(), lep_eta_low.end());
+lep_id_low_float.assign(lep_id_low.begin(), lep_id_low.end());
+lep_phi_low_float.assign(lep_phi_low.begin(), lep_phi_low.end());
+lep_mass_low_float.assign(lep_mass_low.begin(), lep_mass_low.end());
+
+
                 lep_pt_FromMuonBestTrack_float.assign(lep_pt_FromMuonBestTrack.begin(),lep_pt_FromMuonBestTrack.end());
                 lep_eta_FromMuonBestTrack_float.assign(lep_eta_FromMuonBestTrack.begin(),lep_eta_FromMuonBestTrack.end());
                 lep_phi_FromMuonBestTrack_float.assign(lep_phi_FromMuonBestTrack.begin(),lep_phi_FromMuonBestTrack.end());
@@ -3670,8 +3749,10 @@ UFHZZ4LAna::findHiggsCandidate(std::vector< pat::Muon > &selectedMuons, std::vec
     using namespace std;
     using namespace reco;
     
-    edm::ESHandle<TransientTrackBuilder> ttkb; 
-	iSetup.get<TransientTrackRecord>().get("TransientTrackBuilder", ttkb);
+//    edm::ESHandle<TransientTrackBuilder> ttkb; 
+//	iSetup.get<TransientTrackRecord>().get("TransientTrackBuilder", ttkb);
+
+edm::ESHandle<TransientTrackBuilder> ttkb = iSetup.getHandle(ttbToken_);
 	
     // Beam Spot
     edm::Handle<reco::BeamSpot> beamSpot;
@@ -3744,7 +3825,7 @@ UFHZZ4LAna::findHiggsCandidate(std::vector< pat::Muon > &selectedMuons, std::vec
     } // lep j
    
     if( (recoMuons.size() + recoElectrons.size()) < 4 ) return;
-        
+
     if (verbose) cout<<"found four leptons"<<endl;     
 
     bool properLep_ID = false; int Nmm = 0; int Nmp = 0; int Nem = 0; int Nep = 0;
@@ -4221,12 +4302,12 @@ if (lep_tightId[i1] && lep_tightId[i2]
 			ttv.push_back(ttkb->build(recoMuons[lep_ptindex[lep_Hindex[2]]].muonBestTrack()));            
 			ttv.push_back(ttkb->build(recoMuons[lep_ptindex[lep_Hindex[3]]].muonBestTrack())); 
 						
-//			for(int i = 0; i < 4; i++){
-//				mass.push_back(recoMuons[lep_ptindex[lep_Hindex[i]]].mass());     
+			for(int i = 0; i < 4; i++){
+				mass.push_back(recoMuons[lep_ptindex[lep_Hindex[i]]].mass());     
 //				SingleTrackVertexConstraint::BTFtuple a = stvc.constrain(ttkb->build(recoMuons[lep_ptindex[lep_Hindex[i]]].muonBestTrack()), BS);
 //				reco::Track singleBS_trk = a.get<1>().track();				
 //				ttv_single.push_back(singleBS_trk);
-//			}
+			}
 
         }
         else if ( abs(lep_id[lep_Hindex[0]])==13 && abs(lep_id[lep_Hindex[2]])==11 ) {
@@ -4346,14 +4427,16 @@ if (lep_tightId[i1] && lep_tightId[i2]
 			}		    
 		}
 */
+
 		KalmanVertexFitter KVfitter(true);
 		TransientVertex KVertex_BS = KVfitter.vertex(ttv, BS);
 	    
 		if(KVertex_BS.hasRefittedTracks()){
-		
+
 			massH_vtx_chi2_BS = KVertex_BS.totalChiSquared()/KVertex_BS.degreesOfFreedom();     
 
 			std::vector <reco::TransientTrack> ttrks_BS = KVertex_BS.refittedTracks();                  			
+
 			if(RecoTwoMuTwoEEvent){						
 				TLorentzVector tmp;
 				std::vector <reco::TransientTrack> ttrks_BS = KVertex_BS.refittedTracks();  
@@ -4513,7 +4596,7 @@ if (lep_tightId[i1] && lep_tightId[i2]
 					dataMCErr_VxBS.push_back(helper.dataMCErr(ciao, vtxLep_BS.at(i).Eta(), hMuScaleFacUnc));
 
 				}        
-				for(int i = 0; i < 4; i ++){
+				for(int i = 9990; i < 4; i ++){
 					commonBS_x.push_back(KalmanRefMu(ttrks_BS.at(i), mass.at(i)).at(0));
 					commonBS_y.push_back(KalmanRefMu(ttrks_BS.at(i), mass.at(i)).at(1));
 					commonBS_z.push_back(KalmanRefMu(ttrks_BS.at(i), mass.at(i)).at(2));
@@ -4533,6 +4616,7 @@ if (lep_tightId[i1] && lep_tightId[i2]
 				commonBS_z.push_back(-999);
 			}        
 		}
+
 
 		TransientVertex KVertex = KVfitter.vertex(ttv);
 		if(KVertex.hasRefittedTracks()){
@@ -4639,28 +4723,6 @@ if (lep_tightId[i1] && lep_tightId[i2]
 				}
 			}		    
 
-// 
-//			DA CANCELLARE 
-// 
-// 
-// 
-// 
-// 			for(int i = 0; i < 4; i++){
-// 				reco::Track track_vtx = ttrks.at(i).track();
-// // 				tmp.SetPxPyPzE( KalmanRefMu(ttrks.at(i), mass.at(i)).at(3), KalmanRefMu(ttrks.at(i), mass.at(i)).at(4), KalmanRefMu(ttrks.at(i), mass.at(i)).at(5), KalmanRefMu(ttrks.at(i), mass.at(i)).at(6));
-// 				tmp.SetPxPyPzE(track_vtx.px(), track_vtx.py(), track_vtx.pz(), KalmanEnergy(track_vtx.px(), track_vtx.py(), track_vtx.pz(), mass.at(i)));
-// // 				std::cout<<fabs(ciao.px()-KalmanRefMu(ttrks.at(i), mass.at(i)).at(3))/KalmanRefMu(ttrks.at(i), mass.at(i)).at(3)<<"\t"<<fabs(ciao.py()-KalmanRefMu(ttrks.at(i), mass.at(i)).at(4))/KalmanRefMu(ttrks.at(i), mass.at(i)).at(4)<<"\t"<<fabs(ciao.pz()-KalmanRefMu(ttrks.at(i), mass.at(i)).at(5))/KalmanRefMu(ttrks.at(i), mass.at(i)).at(5)<<"\t"<<std::endl;
-// // 				std::cout<<ciao.ptError()<<std::endl;
-// 				vtxLep_ptError.push_back(track_vtx.ptError());
-// 			    vtxLep.push_back(tmp);
-// 		    }
-// 		    
-// 			for(int i = 0; i < 4; i ++){
-// 				commonPV_x.push_back(KalmanRefMu(ttrks.at(i), lepFSR_mass[i]).at(0));
-// 				commonPV_y.push_back(KalmanRefMu(ttrks.at(i), lepFSR_mass[i]).at(1));
-// 				commonPV_z.push_back(KalmanRefMu(ttrks.at(i), lepFSR_mass[i]).at(2));
-// 			}
-//			DA CANCELLARE	        
 		}
 		else{
 			massH_vtx_chi2 = -999;
@@ -5024,6 +5086,11 @@ void UFHZZ4LAna::bookPassedEventTree(TString treeName, TTree *tree)
     tree->Branch("lep_errPre_noScale",&lep_errPre_noScale_float);
     tree->Branch("lep_errPost_noScale",&lep_errPost_noScale_float);
 
+//    tree->Branch("lep_pt_low",&lep_pt_low_float);
+//    tree->Branch("lep_eta_low",&lep_eta_low_float);
+//    tree->Branch("lep_id_low",&lep_id_low_float);
+//    tree->Branch("lep_phi_low",&lep_phi_low_float);
+//    tree->Branch("lep_mass_low",&lep_mass_low_float);
 
     tree->Branch("lep_pt_FromMuonBestTrack",&lep_pt_FromMuonBestTrack_float);
     tree->Branch("lep_eta_FromMuonBestTrack",&lep_eta_FromMuonBestTrack_float);
@@ -5693,12 +5760,12 @@ void UFHZZ4LAna::setTreeVariables( const edm::Event& iEvent, const edm::EventSet
 
             double jet_scalefactor    = 1.0;
             
-            jet_scalefactor    = reader->eval_auto_bounds(
-                "central", 
-                BTagEntry::FLAV_B, 
-                goodJets[k].eta(), 
-                goodJets[k].pt()
-                ); 
+//             jet_scalefactor    = reader->eval_auto_bounds(
+//                 "central", 
+//                 BTagEntry::FLAV_B, 
+//                 goodJets[k].eta(), 
+//                 goodJets[k].pt()
+//                 ); 
             
             if ((goodJets[k].bDiscriminator("pfDeepCSVJetTags:probb")+goodJets[k].bDiscriminator("pfDeepCSVJetTags:probbb"))>BTagCut && coin>(1.0-jet_scalefactor)) {
             //if (goodJets[k].bDiscriminator("pfDeepCSVDiscriminatorsJetTags:BvsAll")>BTagCut && coin>(1.0-jet_scalefactor)) {
