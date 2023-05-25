@@ -434,9 +434,11 @@ std::vector<pat::Muon> HZZ4LHelper::goodMuons2015_noIso_noPf(std::vector<pat::Mu
             //std::cout<<"test1 "<<std::endl;
             if( abs(getSIP3D(Muons[i])) < sip3dCut ) {
                 //std::cout<<"test2 "<<std::endl;
-                if( fabs(Muons[i].muonBestTrack()->dxy(vertex->position())) < dxyCut ) { //miniAOD 
-                    //std::cout<<"test3 "<<std::endl;
-                    if( fabs(Muons[i].muonBestTrack()->dz(vertex->position())) < dzCut ) {// miniAOD       
+                if( fabs(Muons[i].dB(pat::Muon::PV2D)) < dxyCut ) { //miniAOD                     
+                    if( fabs(Muons[i].dB(pat::Muon::PVDZ)) < dzCut ) {// miniAOD  
+//                if( fabs(Muons[i].muonBestTrack()->dxy(vertex->position())) < dxyCut ) { //miniAOD                     
+//                    if( fabs(Muons[i].muonBestTrack()->dz(vertex->position())) < dzCut ) {// miniAOD
+
 
                         //std::cout<<"test4 "<<std::endl;
                         bestMuons.push_back(Muons[i]);
@@ -508,11 +510,13 @@ else{
 //	std::cout<<"OK pt "<<std::endl;
         if( abs(getSIP3D(Electrons[i])) < sip3dCut) {
 //		std::cout<<"ok SIP"<<std::endl;
-            if (fabs(Electrons[i].gsfTrack()->dxy(vertex->position())) < dxyCut) {
+//            if (fabs(Electrons[i].gsfTrack()->dxy(vertex->position())) < dxyCut) {
 //std::cout<<"ok dxy"<<std::endl;
-                if (fabs(Electrons[i].gsfTrack()->dz(vertex->position())) < dzCut ) {                  
+//                if (fabs(Electrons[i].gsfTrack()->dz(vertex->position())) < dzCut ) {                  
 //std::cout<<"ok dz"<<std::endl;
-                    int misHits = Electrons[i].gsfTrack()->hitPattern().numberOfAllHits(reco::HitPattern::MISSING_INNER_HITS); // for miniAOD
+            if( fabs(Electrons[i].dB(pat::Electron::PV2D)) < dxyCut ) { //miniAOD                     
+                if( fabs(Electrons[i].dB(pat::Electron::PVDZ)) < dzCut ) {// miniAOD  
+    			int misHits = Electrons[i].gsfTrack()->hitPattern().numberOfAllHits(reco::HitPattern::MISSING_INNER_HITS); // for miniAOD
                     if (misHits < missingHitsCuts) { 
 //std::cout<<"OK best"<<std::endl;
 				bestElectrons.push_back(Electrons[i]);
@@ -830,9 +834,11 @@ bool HZZ4LHelper::passTight_Id(pat::Muon muon, const reco::Vertex *&vertex) {
     else {
         return ( (muon.numberOfMatchedStations() > 1 
                   && (muon.muonBestTrack()->ptError()/muon.muonBestTrack()->pt()) < 0.3 
-                  && std::abs(muon.muonBestTrack()->dxy(vertex->position())) < 0.2 
-                  && std::abs(muon.muonBestTrack()->dz(vertex->position())) < 0.5 
-                  && muon.innerTrack()->hitPattern().numberOfValidPixelHits() > 0 
+//                  && std::abs(muon.muonBestTrack()->dxy(vertex->position())) < 0.2 
+//                  && std::abs(muon.muonBestTrack()->dz(vertex->position())) < 0.5 
+		  && fabs(muon.dB(pat::Muon::PV2D)) < 0.2
+  		  && fabs(muon.dB(pat::Muon::PVDZ)) < 0.5		  
+		  && muon.innerTrack()->hitPattern().numberOfValidPixelHits() > 0 
                   && muon.innerTrack()->hitPattern().trackerLayersWithMeasurement() > 5) || muon.isPFMuon() );
     }
 }
@@ -852,8 +858,10 @@ bool HZZ4LHelper::passTight_Id_SUS(pat::Muon muon, const reco::Vertex *&vertex) 
         if (muon.isMediumMuon() != 1) return false;
     double dxyCut = 0.05;
     double dzCut = 0.1;
-    if( fabs(muon.muonBestTrack()->dxy(vertex->position())) >= dxyCut ) return false;
-    if( fabs(muon.muonBestTrack()->dz(vertex->position())) >= dzCut ) return false;
+//    if( fabs(muon.muonBestTrack()->dxy(vertex->position())) >= dxyCut ) return false;
+//    if( fabs(muon.muonBestTrack()->dz(vertex->position())) >= dzCut ) return false;
+    if(fabs(muon.dB(pat::Muon::PV2D)) >= dxyCut ) return false;
+    if(fabs(muon.dB(pat::Muon::PVDZ)) >= dzCut ) return false; 
     return true;
 }
 
@@ -861,9 +869,10 @@ bool HZZ4LHelper::passTight_Id_SUS(pat::Electron electron, std::string elecID, c
 
     double dxyCut = 0.05;
     double dzCut = 0.1;
-    if( fabs(electron.gsfTrack()->dxy(vertex->position())) >= dxyCut ) return false;
-    if( fabs(electron.gsfTrack()->dz(vertex->position())) >= dzCut ) return false;
-
+//    if( fabs(electron.gsfTrack()->dxy(vertex->position())) >= dxyCut ) return false;
+//    if( fabs(electron.gsfTrack()->dz(vertex->position())) >= dzCut ) return false;
+    if( fabs(electron.dB(pat::Electron::PV2D))  >= dxyCut ) return false;
+    if( fabs(electron.dB(pat::Electron::PVDZ))  >= dzCut ) return false;
     float cutVal=1000;
     float mvaVal=-1;
     //float fSCeta = fabs(electron.eta());

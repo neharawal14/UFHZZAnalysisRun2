@@ -14,8 +14,8 @@ process.load("Configuration.Geometry.GeometryRecoDB_cff")
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 process.load('Configuration.StandardSequences.Services_cff')
 
-#process.GlobalTag.globaltag='124X_mcRun3_2022_realistic_v12'
-process.GlobalTag.globaltag='124X_mcRun3_2022_realistic_postEE_v1' ### EE campaign
+process.GlobalTag.globaltag='124X_mcRun3_2022_realistic_v12'
+#process.GlobalTag.globaltag='124X_mcRun3_2022_realistic_postEE_v1' ### EE campaign
 
 
 
