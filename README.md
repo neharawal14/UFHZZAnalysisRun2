@@ -23,7 +23,7 @@ cd ../../
 
 git clone -b 12_4_3 https://ferrico@github.com/ferrico/UFHZZAnalysisRun2.git
 
-git clone -b UL20_10_6_26  https://github.com/ferrico/KinZfitter.git
+git clone -b tmp_Ferrico  https://github.com/ferrico/KinZfitter.git
 
 scramv1 b -j 8
 
