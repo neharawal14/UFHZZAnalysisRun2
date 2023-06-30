@@ -20,7 +20,7 @@ git cms-addpkg RecoJets/JetProducers
 git cms-addpkg PhysicsTools/PatAlgos/
 git clone -b v2.3.5 https://github.com/JHUGen/JHUGenMELA
 sh JHUGenMELA/MELA/setup.sh -j 8
-git clone -b UL20_10_6_26  https://github.com/ferrico/KinZfitter.git
+git clone -b tmp_Ferrico  https://github.com/ferrico/KinZfitter.git
 scramv1 b -j 8
 
 
