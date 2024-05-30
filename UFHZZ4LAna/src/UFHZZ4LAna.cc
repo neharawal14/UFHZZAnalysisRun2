@@ -283,6 +283,10 @@ private:
     vector<double> lep_position_x, lep_position_y, lep_position_z;
     vector<double> lep_pt_genFromReco;
     vector<double> lep_pt; vector<double> lep_pterr; vector<double> lep_pterrold; 
+    // New added: momentum from track
+    vector<double> lep_pt_trk; 
+    vector<double> lep_eta_trk; 
+    vector<double> lep_phi_trk; 
     vector<double> lep_p; vector<double> lep_ecalEnergy; vector<int> lep_isEB; vector<int> lep_isEE;
     vector<double> lep_eta; vector<double> lep_phi; vector<double> lep_mass;
     vector<double> lepFSR_pt; vector<double> lepFSR_eta; vector<double> lepFSR_phi; vector<double> lepFSR_mass; vector<int> lepFSR_ID;
@@ -597,6 +601,10 @@ private:
     vector<float> lep_errPre_noScale_float;
     vector<float> lep_errPost_noScale_float;
 
+    // New added: momentum from track
+    vector<float> lep_pt_trk_float;
+    vector<float> lep_eta_trk_float;
+    vector<float> lep_phi_trk_float;
     vector<float> lep_pt_float, lep_pterr_float, lep_pterrold_float;
     vector<float> lep_p_float, lep_ecalEnergy_float;
     vector<float> lep_eta_float, lep_phi_float, lep_mass_float;
@@ -1219,6 +1227,10 @@ UFHZZ4LAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	lep_position_x.clear();	lep_position_y.clear();	lep_position_z.clear();
 	lep_pt_genFromReco.clear();
     lep_pt_UnS.clear(); lep_pterrold_UnS.clear();
+    //New added: momentum from track
+    lep_pt_trk.clear();
+    lep_eta_trk.clear();
+    lep_phi_trk.clear();
     lep_pt.clear(); lep_pterr.clear(); lep_pterrold.clear(); 
     lep_p.clear(); lep_ecalEnergy.clear(); lep_isEB.clear(); lep_isEE.clear();
 	lep_errPre_Scale.clear(); lep_errPost_Scale.clear(); lep_errPre_noScale.clear(); lep_errPost_noScale.clear();
@@ -1616,6 +1628,10 @@ UFHZZ4LAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	lep_errPre_noScale_float.clear();
 	lep_errPost_noScale_float.clear();
 
+  // New added: momentum from track
+  lep_pt_trk_float.clear();
+  lep_eta_trk_float.clear();
+  lep_phi_trk_float.clear();
     lep_pt_float.clear(); lep_pterr_float.clear(); lep_pterrold_float.clear(); 
     lep_p_float.clear(); lep_ecalEnergy_float.clear();  
     lep_eta_float.clear(); lep_phi_float.clear(); lep_mass_float.clear();
@@ -1960,6 +1976,10 @@ UFHZZ4LAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 					lep_p.push_back(recoElectrons[lep_ptindex[i]].p());
 					lep_ecalEnergy.push_back(recoElectrons[lep_ptindex[i]].correctedEcalEnergy());
                     lep_id.push_back(recoElectrons[lep_ptindex[i]].pdgId());
+                    //New added: momentum from track
+                    lep_pt_trk.push_back(-999);
+                    lep_eta_trk.push_back(-999);
+                    lep_phi_trk.push_back(-999);
                     lep_pt.push_back(recoElectrons[lep_ptindex[i]].pt());
                     lep_pterrold.push_back(recoElectrons[lep_ptindex[i]].p4Error(reco::GsfElectron::P4_COMBINATION));
 					lep_pt_FromMuonBestTrack.push_back(-999);
@@ -2105,6 +2125,11 @@ auto gen_lep = recoMuons[lep_ptindex[i]].genParticle();
 					lep_p.push_back(recoMuons[lep_ptindex[i]].p());
 					lep_ecalEnergy.push_back(0);
                     lep_id.push_back(recoMuons[lep_ptindex[i]].pdgId());
+                    //std::cout<<" inner track pt "<<recoMuons[lep_ptindex[i]].innerTrack()->pt()<<std::endl;
+                    // New added: momentum from track
+                    lep_pt_trk.push_back(recoMuons[lep_ptindex[i]].innerTrack()->pt());
+                    lep_eta_trk.push_back(recoMuons[lep_ptindex[i]].innerTrack()->eta());
+                    lep_phi_trk.push_back(recoMuons[lep_ptindex[i]].innerTrack()->phi());
                     lep_pt.push_back(recoMuons[lep_ptindex[i]].pt());
                     lep_pterrold.push_back(recoMuons[lep_ptindex[i]].muonBestTrack()->ptError());
                     
@@ -3433,6 +3458,11 @@ auto gen_lep = recoMuons[lep_ptindex[i]].genParticle();
                 lep_position_y_float.assign(lep_position_y.begin(),lep_position_y.end());
                 lep_position_z_float.assign(lep_position_z.begin(),lep_position_z.end());
                 lep_pt_genFromReco_float.assign(lep_pt_genFromReco.begin(),lep_pt_genFromReco.end());
+                // New added: momentum from track
+                lep_pt_trk_float.assign(lep_pt_trk.begin(),lep_pt_trk.end());
+                lep_eta_trk_float.assign(lep_eta_trk.begin(),lep_eta_trk.end());
+                lep_phi_trk_float.assign(lep_phi_trk.begin(),lep_phi_trk.end());
+
                 lep_pt_float.assign(lep_pt.begin(),lep_pt.end());
                 lep_p_float.assign(lep_p.begin(),lep_p.end());
                 lep_ecalEnergy_float.assign(lep_ecalEnergy.begin(),lep_ecalEnergy.end());                
@@ -5007,6 +5037,10 @@ void UFHZZ4LAna::bookPassedEventTree(TString treeName, TTree *tree)
     tree->Branch("lep_pt_genFromReco",&lep_pt_genFromReco_float);
 
     tree->Branch("lep_id",&lep_id);
+    // New added: momentum from track
+    tree->Branch("lep_pt_trk",&lep_pt_trk_float);
+    tree->Branch("lep_eta_trk",&lep_eta_trk_float);
+    tree->Branch("lep_phi_trk",&lep_phi_trk_float);
     tree->Branch("lep_pt",&lep_pt_float);
     tree->Branch("lep_pterr",&lep_pterr_float);
     tree->Branch("lep_pterrold",&lep_pterrold_float);
