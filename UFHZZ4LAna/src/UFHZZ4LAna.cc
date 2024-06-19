@@ -284,7 +284,7 @@ private:
     vector<double> lep_pt_genFromReco;
     vector<double> lep_pt; vector<double> lep_pterr; vector<double> lep_pterrold; 
     // New added: momentum from track
-    vector<double> lep_pt_trk; 
+    vector<double> lep_pt_trk , lep_pterr_trk; 
     vector<double> lep_eta_trk; 
     vector<double> lep_phi_trk; 
     vector<double> lep_p; vector<double> lep_ecalEnergy; vector<int> lep_isEB; vector<int> lep_isEE;
@@ -602,7 +602,7 @@ private:
     vector<float> lep_errPost_noScale_float;
 
     // New added: momentum from track
-    vector<float> lep_pt_trk_float;
+    vector<float> lep_pt_trk_float, lep_pterr_trk_float;
     vector<float> lep_eta_trk_float;
     vector<float> lep_phi_trk_float;
     vector<float> lep_pt_float, lep_pterr_float, lep_pterrold_float;
@@ -1228,7 +1228,7 @@ UFHZZ4LAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	lep_pt_genFromReco.clear();
     lep_pt_UnS.clear(); lep_pterrold_UnS.clear();
     //New added: momentum from track
-    lep_pt_trk.clear();
+    lep_pt_trk.clear(), lep_pterr_trk.clear();
     lep_eta_trk.clear();
     lep_phi_trk.clear();
     lep_pt.clear(); lep_pterr.clear(); lep_pterrold.clear(); 
@@ -1629,7 +1629,7 @@ UFHZZ4LAna::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 	lep_errPost_noScale_float.clear();
 
   // New added: momentum from track
-  lep_pt_trk_float.clear();
+  lep_pt_trk_float.clear(), lep_pterr_trk_float.clear();
   lep_eta_trk_float.clear();
   lep_phi_trk_float.clear();
     lep_pt_float.clear(); lep_pterr_float.clear(); lep_pterrold_float.clear(); 
@@ -2173,8 +2173,10 @@ auto gen_lep = recoMuons[lep_ptindex[i]].genParticle();
 
                     if (recoMuons[lep_ptindex[i]].hasUserFloat("correctedPtError")) {
                         lep_pterr.push_back(recoMuons[lep_ptindex[i]].userFloat("correctedPtError"));
+                        lep_pterr_trk.push_back(recoMuons[lep_ptindex[i]].innerTrack()->ptError());
                     } else {
                         lep_pterr.push_back(recoMuons[lep_ptindex[i]].muonBestTrack()->ptError());
+                        lep_pterr_trk.push_back(recoMuons[lep_ptindex[i]].innerTrack()->ptError());
                     }
                     lep_eta.push_back(recoMuons[lep_ptindex[i]].eta());
                     lep_phi.push_back(recoMuons[lep_ptindex[i]].phi());
@@ -3467,6 +3469,7 @@ auto gen_lep = recoMuons[lep_ptindex[i]].genParticle();
                 lep_p_float.assign(lep_p.begin(),lep_p.end());
                 lep_ecalEnergy_float.assign(lep_ecalEnergy.begin(),lep_ecalEnergy.end());                
                 lep_pterr_float.assign(lep_pterr.begin(),lep_pterr.end());
+                lep_pterr_trk_float.assign(lep_pterr_trk.begin(),lep_pterr_trk.end());
                 lep_pterrold_float.assign(lep_pterrold.begin(),lep_pterrold.end());
                 lep_eta_float.assign(lep_eta.begin(),lep_eta.end());
                 lep_phi_float.assign(lep_phi.begin(),lep_phi.end());
@@ -5043,6 +5046,7 @@ void UFHZZ4LAna::bookPassedEventTree(TString treeName, TTree *tree)
     tree->Branch("lep_phi_trk",&lep_phi_trk_float);
     tree->Branch("lep_pt",&lep_pt_float);
     tree->Branch("lep_pterr",&lep_pterr_float);
+    tree->Branch("lep_pterr_trk",&lep_pterr_trk_float);
     tree->Branch("lep_pterrold",&lep_pterrold_float);
     tree->Branch("lep_eta",&lep_eta_float);
     tree->Branch("lep_phi",&lep_phi_float);
